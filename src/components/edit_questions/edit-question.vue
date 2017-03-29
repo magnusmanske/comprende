@@ -1,0 +1,85 @@
+<template id='edit-question-template'>
+<div>
+<div class="card card-stack">
+
+<ul :class='getClass'>
+<li v-if='problems.label_description_collision'>A question with this exact label and description in this language already exists as <router-link :to='"/question/"+ld_double' target='_blank'>{{ld_double}}</router-link>.<br/>You need to change the label or the description, otherwise the question can not be imported.</li>
+<li v-if='problems.empty_label_description'>Both a label and a text are required.</li>
+<li v-if='problems.minimum_answers'>A minimum of two answers is required.</li>
+<li v-if='problems.fractions_100'>The fractions of the answers need to sum up to 100.</li>
+<li v-if='problems.blank_answers'>Answer texts must not be empty.</li>
+</ul>
+
+<edit-question-multiple-choice v-if='question.type==wdid.q_multiple_choice_question' :question='question'></edit-question-multiple-choice>
+<div v-else>Unknown question type "{{question.type}}"</div>
+
+<div class="card-block">
+<label><input type='checkbox' v-model='question.import2wb' /> Import question to Comprende!</label>
+<label><input type='checkbox' v-model='question.add2quiz' /> Add question to quiz</label>
+<button class='btn btn-sm btn-outline-danger' @click.prevent='deleteQuestion'>Delete this question</button>
+</div>
+
+</div>
+</div>
+</template>
+
+<script>
+import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
+import wdid from '../../config/wdid.js'
+import EditQuestionMultipleChoice from './edit-question-multiple-choice.vue'
+
+export default {
+	mixins : [ wikibaseAPImixin ] ,
+	props : [ 'question' ] ,
+	data : function () { return { problems:{label_description_collision:false,empty_label_description:false,minimum_answers:false,fractions_100:false,blank_answers:false} , ld_double:'' , wdid } } ,
+	components : { 'edit-question-multiple-choice':EditQuestionMultipleChoice } ,
+	created : function () {
+		this.checkLabelDescription()
+	} ,
+	computed : {
+		getClass : function () {
+			var has_problem = false ;
+			$.each ( this.problems , function ( k , v ) { if ( v ) has_problem = true } ) ;
+			this.question.can_be_imported = !has_problem ;
+			return { alert:has_problem , 'alert-danger':has_problem , dontshow:!has_problem } ;
+		}
+	} ,
+	methods : {
+		deleteQuestion : function () {
+			this.$emit ( 'delete_question' , this.question.id ) ;
+		} ,
+		checkLabelDescription : function () {
+			var me = this ;
+			var label = $.trim ( me.question.label.text ) ;
+			var text = $.trim ( me.question.text.text ) ;
+			var lang = me.question.label.language ;
+			var sum = 0 ;
+			$.each ( me.problems , function ( k , v ) { me.problems[k] = false } ) ; // Reset
+			$.each ( me.question.answers , function ( k , v ) {
+				sum += parseInt ( v.fraction.text ) ;
+				if ( $.trim(v.text.text) == '' ) me.problems.blank_answers = true ;
+			} ) ;
+			me.problems.fractions_100 = sum != 100 ;
+			me.problems.minimum_answers = me.question.answers.length < 2 ;
+			me.problems.empty_label_description = (label=='' || text=='') ;
+			me.searchEntity ( label , 'item' , function ( d ) {
+				me.problems.label_description_collision = false ;
+				$.each ( d.search , function ( k , v ) {
+					if ( v.label != label || v.description != text ) return ;
+					me.problems.label_description_collision = true ;
+					me.ld_double = v.id ;
+					return false ;
+				} ) ;
+			} ) ;
+		}
+	} ,
+	watch : {
+		'question.label.text' : function () { this.checkLabelDescription() } ,
+		'question.text.text' : function () { this.checkLabelDescription() } ,
+		'question.answers' : { handler : function () { this.checkLabelDescription() } , deep : true }
+	}
+}
+</script>
+
+<style>
+</style>
