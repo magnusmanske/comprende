@@ -1,6 +1,6 @@
 # comprende
 
-> A vue.js-based interface to use a MediaWiki/Wikibase installation as a question/quiz service
+> A vue.js-based interface to use a MediaWiki/Wikibase installation as a question/quiz service. Test site: https://tools.wmflabs.org/comprende/interface.html#/
 
 
 ## Build Setup
