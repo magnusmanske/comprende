@@ -5,6 +5,7 @@
 
 ## Build Setup
 
+```
 Install MediaWiki HEAD
 Install WikiBase HEAD
 Checkout comprende repo
@@ -26,6 +27,6 @@ npm install --save-dev vue-router
 cd .. ; comprende/node_modules/.bin/vue init webpack-simple comprende
 cd comprende ; npm install
 node_modules/.bin/webpack -w
-
+```
 
 For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
