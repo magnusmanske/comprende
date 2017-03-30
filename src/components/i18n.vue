@@ -54,6 +54,11 @@ export default {
 			if ( -1 == ret.indexOf('en') ) ret.push ( 'en' ) ; // Hardcoded fallback language as last resort
 			return ret ;
 		} ,
+		tr : function ( key , params ) {
+			var tr = this.getTranslation ( key , params ) ;
+			if ( typeof tr == 'undefined' ) return 'no translation: ' + key ;
+			return tr.translation + (tr.language==this.getMainLanguage()?'':' ['+tr.language+']') ;
+		} ,
 		getTranslation : function ( _key , params ) {
 			if ( typeof _key == 'undefined' ) return ;
 			var me = this ;
@@ -80,9 +85,10 @@ export default {
 		clickTranslate : function () {
 			var me = this ;
 			var t = me.getTranslation ( 'translate_to' , me.getAllUserLanguages() ) ;
+			var initial_value = '' ;
 			var tv = me.getTranslation ( me.k ) ;
-			var initial_value = (tv.translation||'') ;
-			var result = prompt ( t.translation , initial_value ) ;
+			if ( typeof tv != 'undefined' ) initial_value = tv.translation ;
+			var result = prompt ( t.translation , (initial_value==''?me.k.replace(/_/g,' '):initial_value) ) ;
 			if ( result === null || result == initial_value ) return ;
 			me.setTranslation ( me.k , me.getMainLanguage() , result ) ;
 		} ,
@@ -136,7 +142,7 @@ export default {
 				}
 				
 			}
-			
+
 			me.getToken ( function ( token ) {
 				params.token = token ;
 				params.format = 'json' ;

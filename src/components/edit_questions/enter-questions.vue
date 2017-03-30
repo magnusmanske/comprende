@@ -2,19 +2,19 @@
 <div>
 
 <div v-if='stage==2'>
-<h2 class="card-title">Enter new questions (and quiz)</h2>
+<h2 class="card-title"><i18n k='Enter new questions'/></h2>
 <edit-question v-for='(question,qnumber) in questions' :key='qnumber' :question='question' v-on:delete_question='deleteQuestion'></edit-question>
 
 <div class="card card-stack">
 <div class="card-block">
-<button class='btn btn-outline-success' @click.prevent='addNewQuestion(wdid.q_multiple_choice_question)'>Add new multiple-choice question</button>
+<button class='btn btn-outline-success' @click.prevent='addNewQuestion(wdid.q_multiple_choice_question)'><i18n k='Add new multiple-choice question'/></button>
 </div></div>
 
 
 <div class="card card-stack">
 <div class="card-block">
 
-<div><label><input type='checkbox' v-model='create_new_quiz' /> Create new quiz with the selected questions (only if a name is given)</label></div>
+<div><label><input type='checkbox' v-model='create_new_quiz' /> <i18n k='Create new quiz with the selected questions'/></label></div>
 
 <div>
 <string-edit label='Name of quiz' :value='quiz'></string-edit>
@@ -22,7 +22,7 @@
 
 <div v-if='questions.length>0'>
 <button v-if='canBeImported' class='btn btn-outline-primary' @click.prevent='doCreate'>Create questions {{create_new_quiz?'and quiz':''}} in Comprende!</button>
-<div v-else class='alert alert-danger'>There are {{problems}} question(s) with issues. These need to be fix before import.</div>
+<div v-else class='alert alert-danger'><i18n k='There are problems in questions' :params='[problems]' /></div>
 </div>
 
 </div>
@@ -44,6 +44,7 @@ Questions <span v-if='(create_new_quiz && quiz_id!="")'>and <router-link :to='"/
 
 
 <script>
+import i18n from '../i18n.vue'
 import newQuestionsMixin from '../../mixins/newQuestionsMixin.vue'
 import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
 import wikibase_default_site from '../../config/wikibase_default_site.js'
@@ -55,7 +56,7 @@ export default {
 	mixins : [ wikibaseAPImixin , newQuestionsMixin ] ,
 	props : [ 'questions' ] ,
 	data : function () { return { stage:2 , create_new_quiz:false , quiz:{text:'',language:''} , quiz_id:'' , new_items:[] , new_items_num:0 , problems:0 , wdid } } ,
-	components : { 'string-edit':StringEdit , 'edit-question':EditQuestion } ,
+	components : { 'string-edit':StringEdit , 'edit-question':EditQuestion , i18n } ,
 	created : function () { this.quiz.language = this.getCurrentLanguage() ; } ,
 	computed : {
 		canBeImported : function () {

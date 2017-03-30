@@ -3,23 +3,26 @@
 
 <div v-if='loaded'>
 <div v-for='t in wp' class='wikipedia_section'>
-<div style='font-family:monospace;float:right;margin-left:5px;margin-bottom:5px;'>[<a target='_blank' :href='t.url'>WP</a>]</div>
-<div v-html='t.text'></div>
+	<!--<div style='font-family:monospace;float:right;margin-left:5px;margin-bottom:5px;'>[<a target='_blank' :href='t.url'>WP</a>]</div>-->
+	<div v-html='t.text'></div>
+	<div class='license_note'>©<a target='_blank' :href='t.url'><i18n k='Wikipedia'/></a>, <a href='https://creativecommons.org/licenses/by-sa/3.0/' target='_blank' class='external'><i18n k='CC-BY-SA-3.0'/></a></div>
 </div>
 </div>
 
-<div v-else><i>Loading...</i></div>
+<div v-else><i><i18n k='loading'/></i></div>
 
 </div>
 </template>
 
 
 <script>
+import i18n from '../i18n.vue'
 import wdid from '../../config/wdid.js'
 import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
 
 export default {
 	mixins : [ wikibaseAPImixin ] ,
+	components : { i18n } ,
 	props : [ 'q' ] ,
 	data : function () { return { wp:[] , loaded:false } } ,
 	created : function () { this.init() } ,
@@ -86,4 +89,11 @@ export default {
 </script>
 
 <style>
+div.wikipedia_section {
+	font-size:10pt;
+	line-height:1.2em;
+	color:#333;
+	padding-left:5px;
+	border-left:10px solid #57BCD9 ;
+}
 </style>

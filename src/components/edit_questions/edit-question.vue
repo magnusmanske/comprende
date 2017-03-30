@@ -3,11 +3,14 @@
 <div class="card card-stack">
 
 <ul :class='getClass'>
-<li v-if='problems.label_description_collision'>A question with this exact label and description in this language already exists as <router-link :to='"/question/"+ld_double' target='_blank'>{{ld_double}}</router-link>.<br/>You need to change the label or the description, otherwise the question can not be imported.</li>
-<li v-if='problems.empty_label_description'>Both a label and a text are required.</li>
-<li v-if='problems.minimum_answers'>A minimum of two answers is required.</li>
-<li v-if='problems.fractions_100'>The fractions of the answers need to sum up to 100.</li>
-<li v-if='problems.blank_answers'>Answer texts must not be empty.</li>
+<li v-if='problems.label_description_collision'>
+	<div><i18n k='A question with this exact label and description in this language already exists as'></i18n> <router-link :to='"/question/"+ld_double' target='_blank'>{{ld_double}}</router-link>.</div>
+	<div><i18n k='You need to change the label or the description, otherwise the question can not be imported'/></div>
+</li>
+<li v-if='problems.empty_label_description'><i18n k='both a label and a text are required'/></li>
+<li v-if='problems.minimum_answers'><i18n k='A minimum of two answers is required'/></li>
+<li v-if='problems.fractions_100'><i18n k='The fractions of the answers need to sum up to 100'/></li>
+<li v-if='problems.blank_answers'><i18n k='Answer texts must not be empty'/></li>
 </ul>
 
 <edit-question-multiple-choice v-if='question.type==wdid.q_multiple_choice_question' :question='question'></edit-question-multiple-choice>
@@ -24,6 +27,7 @@
 </template>
 
 <script>
+import i18n from '../i18n.vue'
 import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
 import wdid from '../../config/wdid.js'
 import EditQuestionMultipleChoice from './edit-question-multiple-choice.vue'
@@ -32,7 +36,7 @@ export default {
 	mixins : [ wikibaseAPImixin ] ,
 	props : [ 'question' ] ,
 	data : function () { return { problems:{label_description_collision:false,empty_label_description:false,minimum_answers:false,fractions_100:false,blank_answers:false} , ld_double:'' , wdid } } ,
-	components : { 'edit-question-multiple-choice':EditQuestionMultipleChoice } ,
+	components : { 'edit-question-multiple-choice':EditQuestionMultipleChoice , i18n } ,
 	created : function () {
 		this.checkLabelDescription()
 	} ,

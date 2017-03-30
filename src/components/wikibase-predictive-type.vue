@@ -3,11 +3,11 @@
 <input type='text' class='form-control col-6 wbpt_query' style='display:inline-block' v-model='text' @keyup='onKeyLift' @keyup.down.prevent='onKeyDown' @keyup.up.prevent='onKeyUp' @keyup.enter.prevent='onEnter' />
 <span v-if='typeof item!="undefined" && item!=""' class='wbpt_item_id'>[<a target='_blank' :href='"https://www.wikidata.org/wiki/"+item'>{{item}}</a>]</span>
 <div v-if='state!="chosen"' class='wbpt_predictive_list'>
-<div v-if='state==""' style='color:#DDD'><i>Empty</i></div>
-<div v-else-if='state=="loading"' style='color:#DDD'><i>Searching...</i></div>
-<div v-else-if='state=="failed"' style='color:#DDD'><i>Search query failed.</i></div>
+<div v-if='state==""' style='color:#DDD'><i><i18n k='empty'/></i></div>
+<div v-else-if='state=="loading"' style='color:#DDD'><i><i18n k='searching'/></i></div>
+<div v-else-if='state=="failed"' style='color:#DDD'><i><i18n k='search query failed'/></i></div>
 <div v-else-if='state=="loaded"'>
-	<div v-if='results.length==0' style='color:#DDD'><i>No search results.</i></div>
+	<div v-if='results.length==0' style='color:#DDD'><i><i18n k='no search results'/></i></div>
 	<div v-else>
 		<div v-for='(r,num) in results' class='wbpt_result' :class='{wbpt_selected_result:(num==result_selected)}' @click.prevent='setFromResult(r)'>
 			<div class='wbpt_label'>
@@ -25,12 +25,17 @@
 
 
 <script>
-module.exports = {
-	props : [ 'item' , 'text' , 'type' , 'site' ] ,
+import i18n from './i18n.vue'
+import wikibaseAPImixin from '../mixins/wikibaseAPImixin.js'
+import wikibase_default_site from '../config/wikibase_default_site.js'
+
+export default {
+	props : [ 'item' , 'text' , 'type' , 'site' ] , // FIXME text,item should not be mutated
 	data : function () { return { state:'' , results:[] , last_text:'' , result_selected:-1 } } ,
+	components : { i18n } ,
 	mixins : [ wikibaseAPImixin ] ,
 	created : function () {
-		if ( typeof this.site == 'undefined' || this.site=='' ) this.site = 'wikibase_default_site' ; // Default: main site
+		if ( typeof this.site == 'undefined' || this.site=='' ) this.site = wikibase_default_site ; // Default: main site
 	} ,
 	mounted : function () {
 		var me = this ;
@@ -87,12 +92,12 @@ module.exports = {
 			if ( me.text == me.last_text ) return ;
 			me.last_text = me.text ;
 			me.state = 'loading' ;
-			var url = window[me.site].api ;
+			var url = me.site.api ;
 			$.getJSON ( url+'?callback=?' , {
 				action:'wbsearchentities',
 				search:me.text,
 				format:'json',
-				language:window[me.site].language,
+				language:me.site.language,
 				type:me.type
 			} , function ( d ) {
 				me.result_selected = -1 ;

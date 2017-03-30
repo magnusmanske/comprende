@@ -3,13 +3,13 @@
 <ul>
 <li><router-link to='/question/Q5'><i18n k='example_question'/></router-link></li>
 <li><router-link to='/quiz/Q70'><i18n k='example_quiz'/></router-link></li>
-<li><router-link to='/new/questions'>Create new questions</router-link> (with or without quiz)</li>
-<li>Import questions from other formats
+<li><router-link to='/new/questions'><i18n k='create new questions'/></router-link> (<i18n k='with or without quiz'/>)</li>
+<li><i18n k='import questions from other formats'></i18n>
 	<ul>
-	<li><router-link to='/import/moodle_xml'>Moodle XML</router-link></li>
+	<li><router-link to='/import/moodle_xml'><i18n k='moodle xml'/></router-link></li>
 	</ul>
 </li>
-<li><a href='/comprende/'>The MediaWiki/WikiBase instance</a></li>
+<li><a href='/comprende/'><i18n k='the wikibase instance'/></a></li>
 </ul>
 </div>
 </template>

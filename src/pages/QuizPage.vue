@@ -14,7 +14,7 @@ You successfully completed the quiz!
 <p class="card-title">{{quiz.getDescription()[0]}}</p>
 <question :q='questions[current_question].q' auto_show_choices='1'></question>
 
-<div v-if='show_next_question_button'>
+<div v-if='show_next_question_button' class='bottom_buttons'>
 <button class='btn btn-outline-success' @click.prevent='showNextQuestion'>Next question</button>
 </div>
 
