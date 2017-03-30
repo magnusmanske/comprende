@@ -3,7 +3,7 @@
 
 <div v-if='stage==2'>
 <h2 class="card-title">Enter new questions (and quiz)</h2>
-<edit-question v-for='(question,qnumber) in questions' :question='question' v-on:delete_question='deleteQuestion'></edit-question>
+<edit-question v-for='(question,qnumber) in questions' :key='qnumber' :question='question' v-on:delete_question='deleteQuestion'></edit-question>
 
 <div class="card card-stack">
 <div class="card-block">

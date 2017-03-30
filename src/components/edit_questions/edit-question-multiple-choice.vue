@@ -9,7 +9,7 @@
 
 </div><div class="card-block">
 
-<edit-answer v-for='(answer,num) in question.answers' :answer='answer' :num='num' v-on:delete_answer='deleteAnswer'></edit-answer>
+<edit-answer v-for='(answer,num) in question.answers' :key='num' :answer='answer' :num='num' v-on:delete_answer='deleteAnswer'></edit-answer>
 
 <button class='btn btn-sm btn-outline-success' @click.prevent='addAnswer'>Add answer</button>
 

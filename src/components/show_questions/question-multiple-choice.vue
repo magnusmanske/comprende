@@ -8,7 +8,7 @@
 </h4>
 <h6 class="card-subtitle mb-2 text-muted">{{i.getDescription()[0]}}</h6>
 <question-intro :q='q'></question-intro>
-<answer v-for='(state,num) in answers' :state='state' :check_choice='options.show_choices'></answer>
+<answer v-for='(state,num) in answers' :key='num' :state='state' :check_choice='options.show_choices'></answer>
 <div style='text-align:center;border-top:1px solid #EEE;' :class='numberSelectedClass'>{{num_required}} answers are required, {{num_selected}} answers selected</div>
 
 </div>
