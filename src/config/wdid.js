@@ -9,7 +9,10 @@ export default {
 	p_wikipedia_page:'P24',
 	p_wikipedia_section:'P20',
 	p_wikipedia_oldid:'P21',
+	p_translation_key:'P25',
+	p_translation:'P26',
 	
+	q_i18n:'Q77',
 	q_label_item_question:'Q3',
 	q_multiple_choice_question:'Q4',
 	q_html:'Q7',

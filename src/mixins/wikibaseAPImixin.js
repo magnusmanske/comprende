@@ -9,6 +9,9 @@ export default {
 		getItem : function ( item ) {
 			return this.getItemSite ( wikibase_default_site , item ) ;
 		} ,
+		reloadItems : function ( items , callback ) {
+			this.reloadItemsSite ( wikibase_default_site , items , callback ) ;
+		} ,
 		searchEntity : function ( s , type , callback ) {
 			this.searchEntitySite ( wikibase_default_site , s , type , callback ) ;
 		} ,
@@ -150,6 +153,14 @@ export default {
 			} ).always ( function () {
 				callback ( result ) ;
 			} ) ;
+		} ,
+		reloadItemsSite : function ( site , items , callback ) {
+			var me = this ;
+			$.each ( items , function ( k , v ) {
+				if ( typeof site.item_cache[v] == 'undefined' ) return ;
+				delete site.item_cache[v] ;
+			} ) ;
+			me.loadItemsSite ( site , items , callback ) ;
 		} ,
 		loadItemsSite : function ( site , items , callback ) {
 			var me = this ;
