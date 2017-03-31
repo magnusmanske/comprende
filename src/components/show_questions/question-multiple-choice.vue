@@ -26,7 +26,7 @@ import answer from './answer.vue'
 export default {
 	mixins : [ wikibaseAPImixin ] ,
 	props: [ 'q' , 'options' ] ,
-	data : function () { return { i:{} , answers:[] , loaded:false , num_selected:0 , num_required:0 } } ,
+	data : function () { return { i:{} , answers:[] , loaded:false , num_selected:0 , num_required:0 , has_been_answered:false } } ,
 	created : function () { this.loadQuestion () } ,
 	components : { 'question-intro':QuestionIntro , answer } ,
 	methods : {
@@ -50,6 +50,7 @@ export default {
 		} ,
 		loadQuestion : function () {
 			var me = this ;
+			me.has_been_answered = false ;
 			me.num_selected = 0 ;
 			me.loaded = false ;
 			me.answers = [] ;
@@ -106,7 +107,10 @@ export default {
 				me.num_selected = cnt ;
 				if ( me.num_required>0 && me.num_required==me.num_selected ) {
 					me.$emit ( 'ready_to_check' ) ;
-					if ( typeof question_bus != 'undefined' ) question_bus.$emit ( 'answered' , (sum>=100) ) ;
+					if ( typeof question_bus != 'undefined' && !me.has_been_answered ) {
+						me.has_been_answered = true ; // Let answer only once
+						question_bus.$emit ( 'answered' , (sum>=100) , sum ) ;
+					}
 				}
 			} ,
 			deep : true

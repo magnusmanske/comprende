@@ -46,9 +46,6 @@ div.bottom_buttons {
 	padding-top:2px;
 	height:3rem;
 }
-div.question {
-	margin-bottom:3rem;
-}
 
 }
 

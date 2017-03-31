@@ -187,10 +187,8 @@ export default {
 		'wikibase_default_site.language' : function () { this.render() } ,
 		'wikibase_default_site.fallback_languages' : function () { this.render() } ,
 		'wikibase_default_site.i18n' : function () { this.render() } ,
-		'wikibase_default_site.edit' : {
-			handler : function () { this.render() } ,
-			deep : true
-		}
+		'params' : { handler : function () { this.render() } , deep : true } ,
+		'wikibase_default_site.edit' : { handler : function () { this.render() } , deep : true } ,
 	}
 }
 </script>
