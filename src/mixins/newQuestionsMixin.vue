@@ -1,6 +1,5 @@
 <script>
-import wdid from '../config/wdid.js'
-import wikibase_default_site from '../config/wikibase_default_site.js'
+import { wdid , wikibase_default_site } from '../config.js'
 
 export default {
 	data : function () { return { question_id_counter:0 } } ,

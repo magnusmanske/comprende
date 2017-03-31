@@ -17,8 +17,7 @@
 
 
 <script>
-import wdid from '../../config/wdid.js'
-import wikidata from '../../config/wikidata_site.js'
+import { wdid , wikidata_site } from '../../config.js'
 import question_bus from './question_bus.vue'
 import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
 import QuestionIntro from './question-intro.vue'
@@ -56,7 +55,7 @@ export default {
 			me.answers = [] ;
 			me.i = me.getItem ( me.q ) ;
 			var wd_answers = me.i.getStringValues ( wdid.p_wd_answer ) ;
-			me.loadItemsSite ( wikidata , wd_answers , function () {
+			me.loadItemsSite ( wikidata_site , wd_answers , function () {
 				var answers = [] ;
 				$.each ( (me.i.json.claims[wdid.p_text_answer]||[]) , function ( k , v ) { answers.push ( {q:me.q,sid:v.id,selected:false,fraction:0} ) } ) ;
 				$.each ( (me.i.json.claims[wdid.p_wd_answer]||[]) , function ( k , v ) { answers.push ( {q:me.q,sid:v.id,selected:false,fraction:0} ) } ) ;

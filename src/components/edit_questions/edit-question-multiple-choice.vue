@@ -19,8 +19,7 @@
 
 <script>
 import i18n from '../i18n.vue'
-import wdid from '../../config/wdid.js'
-import wikibase_default_site from '../../config/wikibase_default_site.js'
+import { wdid , wikibase_default_site } from '../../config.js'
 import StringEdit from '../string-edit.vue'
 import EditAnswer from './edit-answer.vue'
 

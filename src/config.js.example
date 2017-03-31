@@ -1,0 +1,69 @@
+export var user = {
+	userinfo : {} ,
+	settings : {
+		edit_interface_translations:false,
+		can_edit:false,
+		language : 'en' ,
+		fallback_languages : [ 'de' , 'es' , 'fr' , 'it' , 'nl' , 'zh' ] ,
+	} ,
+	isLoggedIn : function () { return this.userinfo.id > 0 } ,
+	getUserName : function () { return this.userinfo.name } ,
+	loadUserInfo : function ( callback ) {
+		var me = this ;
+		$.get ( wikibase_default_site.api , {
+			action:'query',
+			meta:'userinfo',
+			format:'json'
+		} , function ( d ) {
+			me.userinfo = d.query.userinfo ;
+			if ( typeof Cookies.get('user_settings') == 'undefined' ) {
+				Cookies.set ( 'user_settings' , JSON.stringify(me.settings) ) ;
+			} else {
+				me.settings = JSON.parse ( Cookies.get('user_settings') ) ;
+				$.each ( ['fallback_languages','language'] , function ( dummy , v ) {
+					wikibase_default_site[v] = me.settings[v] ;
+					wikidata_site[v] = me.settings[v] ;
+				} ) ;
+			}
+			me.settings.can_edit = me.isLoggedIn() ;
+		} , 'json' ) . always ( callback ) ;
+	} ,
+}
+
+export var wdid = {
+	p_type:'P4',
+	p_fraction:'P5',
+	p_text_answer:'P12',
+	p_wd_answer:'P7',
+	p_part:'P14',
+	p_hint:'P16',
+	p_serial_number:'P17',
+	p_wikipedia_page:'P24',
+	p_wikipedia_section:'P20',
+	p_wikipedia_oldid:'P21',
+	p_translation_key:'P25',
+	p_translation:'P26',
+	
+	q_i18n:'Q77',
+	q_label_item_question:'Q3',
+	q_multiple_choice_question:'Q4',
+	q_html:'Q7',
+	q_quiz:'Q8',
+}
+
+// Default wikibase installation, to be used by wikibaseAPImixin
+export var wikibase_default_site = {
+	api : 'https://tools.wmflabs.org/comprende/api.php' ,
+	item_cache : {} ,
+	language : 'en' ,
+	i18n : {} ,
+	fallback_languages : [ 'de' , 'es' , 'fr' , 'it' , 'nl' , 'zh' ]
+}
+
+// Wikidata wikibase installation, to be used by wikibaseAPImixin
+export var wikidata_site = {
+	api : 'https://www.wikidata.org/w/api.php' ,
+	item_cache : {} ,
+	language : 'en' ,
+	fallback_languages : [ 'de' , 'es' , 'fr' , 'it' , 'nl' , 'zh' ]
+}

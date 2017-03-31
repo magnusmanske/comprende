@@ -1,4 +1,4 @@
-import wikibase_default_site from '../config/wikibase_default_site.js'
+import { wikibase_default_site } from '../config.js'
 
 // Item class
 export default function ( _json ) {

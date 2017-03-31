@@ -29,7 +29,7 @@
 <script>
 import i18n from '../i18n.vue'
 import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
-import wdid from '../../config/wdid.js'
+import { wdid } from '../../config.js'
 import EditQuestionMultipleChoice from './edit-question-multiple-choice.vue'
 
 export default {

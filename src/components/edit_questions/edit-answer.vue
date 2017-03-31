@@ -36,11 +36,10 @@
 </template>
 
 <script>
-import wdid from '../../config/wdid.js'
+import { wdid , wikidata_site } from '../../config.js'
 import StringEdit from '../string-edit.vue'
 import i18n from '../i18n.vue'
 import WikibasePredictiveType from '../wikibase-predictive-type.vue'
-import wikidata_site from '../../config/wikidata_site.js' ;
 
 export default {
 	props : [ 'answer' , 'num' ] ,

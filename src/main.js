@@ -1,14 +1,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import App from './App.vue'
-import meta from './config/meta.js'
+import { user , wdid , wikibase_default_site , wikidata_site } from './config.js'
 import MainPage from './pages/MainPage.vue'
 import QuestionPage from './pages/QuestionPage.vue'
 import QuizPage from './pages/QuizPage.vue'
 import NewQuestions from './pages/NewQuestions.vue'
 import ImportMoodleXML from './pages/ImportMoodleXML.vue'
-import wdid from './config/wdid.js'
-import wikibase_default_site from './config/wikibase_default_site.js'
 import WikibaseItem from './mixins/WikibaseItem.js'
 import i18n from './components/i18n.vue'
 
@@ -29,6 +27,8 @@ var app ;
 
 $(document).ready ( function () {
 
+
+/*
 	if ( typeof Cookies.get('comprende_language') == 'undefined' ) {
 		Cookies.set('comprende_language',wikibase_default_site.language) ;
 		Cookies.set('comprende_fallback_languages',wikibase_default_site.fallback_languages.join('|')) ;
@@ -36,7 +36,7 @@ $(document).ready ( function () {
 		wikibase_default_site.language = Cookies.get('comprende_language') ;
 		wikibase_default_site.fallback_languages = Cookies.get('comprende_fallback_languages').split('|') ;
 	}
-	
+*/	
 
 	var cnt = 0 ;
 	function fin () {
@@ -45,19 +45,6 @@ $(document).ready ( function () {
 		app = new Vue ( { router } ) .$mount('#app') ;
 	}
 	
-	function loadUserInfo () {
-		cnt++ ;
-		$.get ( wikibase_default_site.api , {
-			action:'query',
-			meta:'userinfo',
-			format:'json'
-		} , function ( d ) {
-			meta.userinfo = d.query.userinfo ;
-			if ( meta.isLoggedIn() ) {
-				wikibase_default_site.edit.can_edit = true ;
-			}
-		} , 'json' ) . always ( fin ) ;
-	}
 	
 	function loadI18n () {
 		cnt++ ;
@@ -65,7 +52,8 @@ $(document).ready ( function () {
 		i.loadTranslations ( fin ) ;
 	}
 	
-	loadUserInfo() ;
+	cnt++ ;
+	user.loadUserInfo(fin) ;
 	loadI18n() ;
 	
 } ) ;

@@ -47,8 +47,7 @@ Questions <span v-if='(create_new_quiz && quiz_id!="")'>and <router-link :to='"/
 import i18n from '../i18n.vue'
 import newQuestionsMixin from '../../mixins/newQuestionsMixin.vue'
 import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
-import wikibase_default_site from '../../config/wikibase_default_site.js'
-import wdid from '../../config/wdid.js'
+import { wdid , wikibase_default_site } from '../../config.js'
 import StringEdit from '../string-edit.vue'
 import EditQuestion from './edit-question.vue'
 

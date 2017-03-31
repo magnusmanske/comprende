@@ -4,7 +4,7 @@
 <span v-else-if='available'>
 	<span v-html='translation'></span>
 	<span v-if='is_fallback' class='comprende_i18n_language' @click.prevent.stop='clickTranslate' :title='translate_title'>[{{fallback_lang}}]</span>
-	<span v-else-if='wikibase_default_site.edit.edit_interface_translations' class='comprende_i18n_language' @click.prevent.stop='clickTranslate' :title='translate_title'>[{{getMainLanguage()}}]</span>
+	<span v-else-if='user.settings.edit_interface_translations' class='comprende_i18n_language' @click.prevent.stop='clickTranslate' :title='translate_title'>[{{getMainLanguage()}}]</span>
 </span>
 <span v-else><i>{{no_translation_available}}:</i> (<tt>{{k}}</tt>) <span class='comprende_i18n_language' @click.prevent.stop='clickTranslate'>[{{translate_title}}]</span></span>
 </span>
@@ -12,15 +12,14 @@
 
 
 <script>
-import wikibase_default_site from '../config/wikibase_default_site.js'
-import wdid from '../config/wdid.js'
+import { user , wdid , wikibase_default_site } from '../config.js'
 import WikibaseItem from '../mixins/WikibaseItem.js'
 import wikibaseAPImixin from '../mixins/wikibaseAPImixin.js'
 
 export default {
 	props : [ 'k' , 'params' ] ,
 	mixins : [ wikibaseAPImixin ] ,
-	data : function () { return { editing:false , translation:'',available:false,is_fallback:false,fallback_lang:'',translate_title:'',no_translation_available:'' , wikibase_default_site } } ,
+	data : function () { return { editing:false , translation:'',available:false,is_fallback:false,fallback_lang:'',translate_title:'',no_translation_available:'' , user } } ,
 	created : function () { this.render() } ,
 	methods : {
 		render : function () {

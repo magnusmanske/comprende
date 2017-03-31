@@ -27,7 +27,7 @@
 <script>
 import i18n from './i18n.vue'
 import wikibaseAPImixin from '../mixins/wikibaseAPImixin.js'
-import wikibase_default_site from '../config/wikibase_default_site.js'
+import { wikibase_default_site } from '../config.js'
 
 export default {
 	props : [ 'item' , 'text' , 'type' , 'site' ] , // FIXME text,item should not be mutated

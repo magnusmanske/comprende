@@ -28,7 +28,7 @@ You successfully completed the quiz!
 <script>
 import question_bus from '../components/show_questions/question_bus.vue'
 import question from '../components/show_questions/question.vue'
-import wdid from '../config/wdid.js'
+import { wdid } from '../config.js'
 import wikibaseAPImixin from '../mixins/wikibaseAPImixin.js'
 
 export default {

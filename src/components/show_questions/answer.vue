@@ -19,9 +19,7 @@
 
 
 <script>
-import wdid from '../../config/wdid.js'
-import wikidata from '../../config/wikidata_site.js'
-import wikibase_default_site from '../../config/wikibase_default_site.js'
+import { wdid , wikibase_default_site , wikidata_site } from '../../config.js'
 import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
 
 export default {
@@ -48,7 +46,7 @@ export default {
 			if ( me.statement.mainsnak.property == wdid.p_text_answer ) me.label = me.statement.mainsnak.datavalue.value ;
 			if ( me.statement.mainsnak.property == wdid.p_wd_answer ) {
 				me.answer_wd_q = me.statement.mainsnak.datavalue.value ;
-				var si = me.getItemSite ( wikidata , me.answer_wd_q ) ;
+				var si = me.getItemSite ( wikidata_site , me.answer_wd_q ) ;
 				var l = si.getLabel() ;
 				me.label = { text:l[0] , language:l[1] } ;
 			}

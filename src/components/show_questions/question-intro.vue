@@ -17,7 +17,7 @@
 
 <script>
 import i18n from '../i18n.vue'
-import wdid from '../../config/wdid.js'
+import { wdid } from '../../config.js'
 import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
 
 export default {
