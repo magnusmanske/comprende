@@ -9,7 +9,7 @@
 <h6 class="card-subtitle mb-2 text-muted">{{i.getDescription()[0]}}</h6>
 <question-intro :q='q'></question-intro>
 <answer v-for='(state,num) in answers' :key='num' :state='state' :check_choice='options.show_choices'></answer>
-<div style='text-align:center;border-top:1px solid #EEE;' :class='numberSelectedClass'>{{num_required}} answers are required, {{num_selected}} answers selected</div>
+<div style='text-align:center;border-top:1px solid #EEE;' :class='numberSelectedClass'><i18n k='answers required selected' :params='[num_required,num_selected]'/></div>
 
 </div>
 </div>
@@ -17,18 +17,19 @@
 
 
 <script>
-import { wdid , wikidata_site } from '../../config.js'
+import { wdid , wikidata_site , user } from '../../config.js'
 import question_bus from './question_bus.vue'
 import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
 import QuestionIntro from './question-intro.vue'
 import answer from './answer.vue'
+import i18n from '../i18n.vue'
 
 export default {
 	mixins : [ wikibaseAPImixin ] ,
 	props: [ 'q' , 'options' ] ,
-	data : function () { return { i:{} , answers:[] , loaded:false , num_selected:0 , num_required:0 , has_been_answered:false } } ,
+	data : function () { return { i:{} , answers:[] , loaded:false , num_selected:0 , num_required:0 , has_been_answered:false , user } } ,
 	created : function () { this.loadQuestion () } ,
-	components : { 'question-intro':QuestionIntro , answer } ,
+	components : { 'question-intro':QuestionIntro , answer , i18n } ,
 	methods : {
 		shuffle : function (array) {
 		  var currentIndex = array.length, temporaryValue, randomIndex;

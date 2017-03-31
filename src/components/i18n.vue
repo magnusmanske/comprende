@@ -3,10 +3,10 @@
 <span v-if='editing'><i>EDITING TRANSLATION...</i></span>
 <span v-else-if='available'>
 	<span v-html='translation'></span>
-	<span v-if='is_fallback' class='comprende_i18n_language' @click.prevent.stop='clickTranslate' :title='translate_title'>[{{fallback_lang}}]</span>
-	<span v-else-if='user.settings.edit_interface_translations' class='comprende_i18n_language' @click.prevent.stop='clickTranslate' :title='translate_title'>[{{getMainLanguage()}}]</span>
+	<span v-if='is_fallback' class='comprende_i18n_language' @click.prevent.stop='clickTranslate' style='cursor:pointer' :title='translate_title'>[{{fallback_lang}}]</span>
+	<span v-else-if='user.settings.edit_interface_translations' class='comprende_i18n_language' style='cursor:pointer' @click.prevent.stop='clickTranslate' :title='translate_title'>[{{getMainLanguage()}}]</span>
 </span>
-<span v-else><i>{{no_translation_available}}:</i> (<tt>{{k}}</tt>) <span class='comprende_i18n_language' @click.prevent.stop='clickTranslate'>[{{translate_title}}]</span></span>
+<span v-else><i>{{no_translation_available}}:</i> (<tt>{{k}}</tt>) <span class='comprende_i18n_language' style='cursor:pointer' @click.prevent.stop='clickTranslate'>[{{translate_title}}]</span></span>
 </span>
 </template>
 
@@ -49,7 +49,7 @@ export default {
 			me.no_translation_available = t.translation ;
 		} ,
 		getAllUserLanguages : function () {
-			var ret = [ this.getMainLanguage() ] . concat ( wikibase_default_site.fallback_languages ) ;
+			var ret = [ this.getMainLanguage() ] . concat ( user.settings.fallback_languages ) ;
 			if ( -1 == ret.indexOf('en') ) ret.push ( 'en' ) ; // Hardcoded fallback language as last resort
 			return ret ;
 		} ,
@@ -79,7 +79,7 @@ export default {
 			return ret ;
 		} ,
 		getMainLanguage : function () {
-			return wikibase_default_site.language ;
+			return user.settings.language ;
 		} ,
 		clickTranslate : function () {
 			var me = this ;
@@ -184,8 +184,7 @@ export default {
 		} ,
 	} ,
 	watch : {
-		'wikibase_default_site.language' : function () { this.render() } ,
-		'wikibase_default_site.fallback_languages' : function () { this.render() } ,
+		'user.settings' : { handler : function () { this.render() } , deep : true } ,
 		'wikibase_default_site.i18n' : function () { this.render() } ,
 		'params' : { handler : function () { this.render() } , deep : true } ,
 		'wikibase_default_site.edit' : { handler : function () { this.render() } , deep : true } ,

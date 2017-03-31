@@ -7,7 +7,7 @@
 		<span v-if='type==wdid.p_text_answer'>{{label.text}}</span>
 		<span v-else-if='type==wdid.p_wd_answer'>{{label.text}}</span>
 		<span v-else style='color:red'>{{label.text}}</span>
-		<small v-if='label.language!=wikibase_default_site.language' style='color:#BBB'>[{{label.language}}]</small>
+		<small v-if='label.language!=user.settings.language' style='color:#BBB'>[{{label.language}}]</small>
 	</div>
 </div>
 <div style='display:table-cell;white-space:nowrap;padding-left:3px;' v-if='type==wdid.p_wd_answer'> <small>[<a :href='"https://www.wikidata.org/wiki/"+answer_wd_q' target='_blank'>{{answer_wd_q}}</a>]</small></div>
@@ -19,13 +19,13 @@
 
 
 <script>
-import { wdid , wikibase_default_site , wikidata_site } from '../../config.js'
+import { wdid , wikidata_site , user } from '../../config.js'
 import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
 
 export default {
 	mixins : [ wikibaseAPImixin ] ,
 	props: [ 'state' , 'check_choice' ] ,
-	data : function () { return { q:'' , statement:{} , label:'' , type:0 , answer_wd_q:0 , use_class:'' , wdid , wikibase_default_site } } ,
+	data : function () { return { q:'' , statement:{} , label:'' , type:0 , answer_wd_q:0 , use_class:'' , wdid , user } } ,
 	created : function () { this.init () } ,
 	computed : {
 		checkmarkClass : function () {
@@ -47,7 +47,7 @@ export default {
 			if ( me.statement.mainsnak.property == wdid.p_wd_answer ) {
 				me.answer_wd_q = me.statement.mainsnak.datavalue.value ;
 				var si = me.getItemSite ( wikidata_site , me.answer_wd_q ) ;
-				var l = si.getLabel() ;
+				var l = si.getLabel(user.settings.language) ;
 				me.label = { text:l[0] , language:l[1] } ;
 			}
 		} ,
@@ -56,10 +56,8 @@ export default {
 		}
 	} ,
 	watch : {
-		state : {
-			handler : function () { this.init() } ,
-			deep : true
-		}
+		state : { handler : function () { this.init() } , deep : true } ,
+		'user.settings' : { handler : function () { this.init () } , deep : true } ,
 	}
 }
 </script>

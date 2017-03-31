@@ -9,8 +9,10 @@ import NewQuestions from './pages/NewQuestions.vue'
 import ImportMoodleXML from './pages/ImportMoodleXML.vue'
 import WikibaseItem from './mixins/WikibaseItem.js'
 import i18n from './components/i18n.vue'
+import NavHeader from './components/nav-header.vue'
 
 Vue.use(VueRouter);
+Vue.use(NavHeader);
 
 const routes = [
   { path: '/', component: MainPage },
@@ -27,18 +29,7 @@ var app ;
 
 $(document).ready ( function () {
 
-
-/*
-	if ( typeof Cookies.get('comprende_language') == 'undefined' ) {
-		Cookies.set('comprende_language',wikibase_default_site.language) ;
-		Cookies.set('comprende_fallback_languages',wikibase_default_site.fallback_languages.join('|')) ;
-	} else {
-		wikibase_default_site.language = Cookies.get('comprende_language') ;
-		wikibase_default_site.fallback_languages = Cookies.get('comprende_fallback_languages').split('|') ;
-	}
-*/	
-
-	var cnt = 0 ;
+	var cnt = 2 ;
 	function fin () {
 		if ( --cnt > 0 ) return ;
 		router = new VueRouter({routes}) ;
@@ -47,12 +38,10 @@ $(document).ready ( function () {
 	
 	
 	function loadI18n () {
-		cnt++ ;
 		var i = new Vue ( { mixins : [ i18n ] } ) ;
 		i.loadTranslations ( fin ) ;
 	}
 	
-	cnt++ ;
 	user.loadUserInfo(fin) ;
 	loadI18n() ;
 	

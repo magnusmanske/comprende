@@ -1,5 +1,6 @@
 <template id='MainPage'>
 <div>
+<nav-header></nav-header>
 <ul>
 <li><router-link to='/question/Q5'><i18n k='example_question'/></router-link></li>
 <li><router-link to='/quiz/Q70'><i18n k='example_quiz'/></router-link></li>
@@ -16,10 +17,11 @@
 
 <script>
 import i18n from '../components/i18n.vue'
+import NavHeader from '../components/nav-header.vue'
 
 export default {
 	name: 'MainPage',
-	components: { i18n } ,
+	components: { i18n , 'nav-header':NavHeader } ,
 } ;
 </script>
 

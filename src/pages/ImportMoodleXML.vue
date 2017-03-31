@@ -1,5 +1,5 @@
 <template>
-<div class='page'>
+<div>
 
 <div v-if='stage==1'>
 <div class="card"><div class="card-block">

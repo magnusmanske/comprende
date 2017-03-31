@@ -1,5 +1,6 @@
 <template id='quiz-page-template'>
 <div>
+<nav-header></nav-header>
 <h1>Quiz</h1>
 
 <div v-if='quiz_is_done'>
@@ -29,10 +30,13 @@
 		</div>
 		<div>
 			<i18n k='total questions in quiz' :params='[progress.total]'></i18n>
-			<i18n k='current points in quiz' :params='[progress.points,progress.total_points]'></i18n>
+			<i18n k='questions correctly failed' :params='[progress.correct,progress.failed]'></i18n>
 			<i18n k='questions left in quiz' :params='[progress.questions_left]'></i18n>
 		</div>
-		<div><i18n k='questions correctly' :params='[progress.correct]'></i18n><i18n k='questions failed' :params='[progress.failed]'></i18n></div>
+		<div>
+			<i18n k='current points in quiz' :params='[progress.points,progress.total_points]'></i18n>
+			<i18n v-if='progress.points_required>0' k='points required for quiz' :params='[progress.points_required]'></i18n>
+		</div>
 	</div>
 </div><!-- question-wrapper -->
 
@@ -54,11 +58,14 @@ import question from '../components/show_questions/question.vue'
 import i18n from '../components/i18n.vue'
 import { wdid } from '../config.js'
 import wikibaseAPImixin from '../mixins/wikibaseAPImixin.js'
+import NavHeader from '../components/nav-header.vue'
+
 /*
 import Vue from 'vue'
 import VueGesture from 'vue-gesture'
 Vue.use(VueGesture)
 */
+
 export default {
 	mixins : [ wikibaseAPImixin ] ,
 	props : [ 'q' ] ,
@@ -67,7 +74,7 @@ export default {
 		question_bus.$on ( 'answered' , this.wasAnswered ) ;
 		this.loadQuiz() ;
 	} ,
-	components : { question , i18n } ,
+	components : { question , i18n , 'nav-header':NavHeader } ,
 	methods : {
 		onSwipeLeft : function () {
 			if ( !this.show_next_question_button ) return ;
@@ -104,7 +111,7 @@ export default {
 			me.quiz = me.getItem ( me.q ) ;
 			var statements = me.quiz.getStatements ( wdid.p_part ) ;
 			var to_load = [] ;
-			me.progress = { total:0 , correct:0 , failed:0 , total_points:0 , points:0 , failed_points:0 , questions_left:0 } ;
+			me.progress = { total:0 , correct:0 , failed:0 , total_points:0 , points:0 , failed_points:0 , questions_left:0 , points_required:0 } ;
 			me.questions = [] ;
 			me.current_question = 0 ;
 			$.each ( statements , function ( dummy , s ) {
@@ -122,6 +129,10 @@ export default {
 				me.progress.questions_left++ ;
 				me.progress.total_points += question.points ;
 			} ) ;
+			
+			statements = me.quiz.getStatements ( wdid.p_points_required ) ;
+			$.each ( statements , function ( k , v ) { me.progress.points_required = v.mainsnak.datavalue.value.amount*1 } ) ;
+			
 			me.loadItems ( to_load , callback ) ;
 		} ,
 		loadQuiz : function () {

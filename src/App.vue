@@ -1,9 +1,11 @@
 <template>
-  <div id="app">
-  </div>
+<div>
+<!-- Not used? -->
+</div>
 </template>
 
 <script>
+
 export default {
   name: 'app',
 }
