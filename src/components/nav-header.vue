@@ -4,7 +4,7 @@
 		<span class="navbar-toggler-icon"></span>
 	</button>
 
-	<router-link class="navbar-brand" to='/quiz/Q70'>Comprende!</router-link>
+	<router-link class="navbar-brand" to='/'>Comprende!</router-link>
 
 
 	<div class="collapse navbar-collapse" id="navbarSupportedContent">

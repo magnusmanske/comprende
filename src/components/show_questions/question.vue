@@ -15,7 +15,7 @@
 <div class='license_note'>©<router-link to='/'><i18n k='Comprende'></i18n></router-link>, <a href='https://creativecommons.org/publicdomain/zero/1.0/' target='_blank' class='external'><i18n k='CC-ZERO'/></a></div>
 
 </div>
-<div v-else><i><i18n k='Loading'/></i></div>
+<div v-else><i><i18n k='loading'/></i></div>
 </div>
 </template>
 

@@ -1,11 +1,12 @@
 <template>
 <div>
+<nav-header></nav-header>
 
 <div v-if='stage==1'>
 <div class="card"><div class="card-block">
-<h2 class="card-title">Import Moodle XML as quiz/questions</h2>
+<h2 class="card-title"><i18n k='import moodle title'/></h2>
 <textarea id='moodle_xml' style='width:100%;font-size:10pt;font-family:monospace' rows='15' placeholder='Paste Moodle XML here'></textarea>
-<button class='btn btn-outline-primary' @click.prevent='doneStage1'>Convert XML</button>
+<button class='btn btn-outline-primary' @click.prevent='doneStage1'><i18n k='Convert XML'/></button>
 </div></div>
 </div>
 
@@ -18,15 +19,17 @@
 
 
 <script>
+import i18n from '../components/i18n.vue'
 import newQuestionsMixin from '../mixins/newQuestionsMixin.vue'
 import wikibaseAPImixin from '../mixins/wikibaseAPImixin.js'
 import EnterQuestions from '../components/edit_questions/enter-questions.vue'
+import NavHeader from '../components/nav-header.vue'
 
 export default {
 	mixins : [ wikibaseAPImixin , newQuestionsMixin ] ,
 	data : function () { return { stage:1 , questions:[] } } ,
 	mounted : function () { $('#moodle_xml').focus() } ,
-	components : { 'enter-questions':EnterQuestions } ,
+	components : { 'enter-questions':EnterQuestions , i18n , 'nav-header':NavHeader } ,
 	methods : {
 		xml2text : function ( v , is_label ) {
 			var me = this ;

@@ -1,15 +1,24 @@
 <template id='quiz-page-template'>
 <div>
 <nav-header></nav-header>
-<h1>Quiz</h1>
+<h1><i18n k='quiz'/></h1>
 
 <div v-if='quiz_is_done'>
+	<h2 class="card-title">
+	<div style='float:right;margin:5px;font-size:8pt;'>[<a :href='"/comprende/index.php?title=Item:"+q' title='See/edit the data item for this quiz' target='_blank'>{{q}}</a>]</div>
+	{{quiz.getLabel()[0]}}
+	</h2>
 	<div><i18n k='quiz completed'/></div>
+	<div><i18n k='questions correctly failed' :params='[progress.correct,progress.failed]'></i18n></div>
 	<div><i18n k='current points in quiz' :params='[progress.points,progress.total_points]'></i18n></div>
-	<div><i18n k='questions correctly' :params='[progress.correct]'></i18n><i18n k='questions failed' :params='[progress.failed]'></i18n></div>
+	<div v-if='progress.points_required>0'><i18n k='points required for quiz' :params='[progress.points_required]'></i18n></div>
 	<div>
 		<div class='progress'><div class="progress-bar bg-success" role="progressbar" :style='"width:"+(100*progress.points/progress.total_points)+"%"' /></div>
 		<div class='progress'><div class="progress-bar bg-danger" role="progressbar" :style='"width:"+(100*progress.failed_points/progress.total_points)+"%"' /></div>
+	</div>
+	<div v-if='progress.points_required>0' class='quiz_result'>
+		<div v-if='progress.points>=progress.points_required'><i18n class='btn-outline-success' k='passed quiz'/></div>
+		<div v-else><i18n class='btn-outline-danger' k='failed quiz'/></div>
 	</div>
 </div>
 
@@ -30,8 +39,10 @@
 		</div>
 		<div>
 			<i18n k='total questions in quiz' :params='[progress.total]'></i18n>
-			<i18n k='questions correctly failed' :params='[progress.correct,progress.failed]'></i18n>
 			<i18n k='questions left in quiz' :params='[progress.questions_left]'></i18n>
+		</div>
+		<div>
+			<i18n k='questions correctly failed' :params='[progress.correct,progress.failed]'></i18n>
 		</div>
 		<div>
 			<i18n k='current points in quiz' :params='[progress.points,progress.total_points]'></i18n>
@@ -41,7 +52,10 @@
 </div><!-- question-wrapper -->
 
 <div v-if='show_next_question_button' class='bottom_buttons'>
-<button :class='{btn:true , "btn-outline-success":last_answer_correct , "btn-outline-secondary":(!last_answer_correct) }' @click.prevent='showNextQuestion'><i18n k='Next question'/></button>
+<button :class='{btn:true , "btn-outline-success":last_answer_correct , "btn-outline-secondary":(!last_answer_correct) }' @click.prevent='showNextQuestion'>
+<i18n v-if='progress.questions_left>0' k='Next question'/>
+<i18n v-else k='show quiz results'/>
+</button>
 </div>
 
 </div>
@@ -149,8 +163,15 @@ export default {
 </script>
 
 <style>
+div.quiz_result {
+	font-size:14pt;
+	text-align:center;
+	margin-top:30px;
+}
+
 @media screen and (orientation:portrait) {
 
+/* This makes the "Next question" button stick to the bottom of the mobile display */
 div.question_wrapper {
 	margin-bottom:3rem;
 }
