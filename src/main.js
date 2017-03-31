@@ -5,6 +5,7 @@ import { user , wdid , wikibase_default_site , wikidata_site } from './config.js
 import MainPage from './pages/MainPage.vue'
 import QuestionPage from './pages/QuestionPage.vue'
 import QuizPage from './pages/QuizPage.vue'
+import DesignQuiz from './pages/DesignQuiz.vue'
 import NewQuestions from './pages/NewQuestions.vue'
 import ImportMoodleXML from './pages/ImportMoodleXML.vue'
 import WikibaseItem from './mixins/WikibaseItem.js'
@@ -21,6 +22,7 @@ const routes = [
   { path: '/quiz/:q', component: QuizPage , props:true } ,
   { path: '/new/questions', component: NewQuestions } ,
   { path: '/import/moodle_xml', component: ImportMoodleXML } ,
+  { path: '/design/quiz/:q', component: DesignQuiz , props:true } ,
 ] ;
 
 var router ;

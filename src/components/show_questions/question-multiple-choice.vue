@@ -3,7 +3,7 @@
 <div class="card-block">
 
 <h4 class="card-title">
-<div style='float:right;margin:5px;font-size:8pt;'>[<a :href='"/comprende/index.php?title=Item:"+q' title='See/edit the data item for this question' target='_blank'>{{q}}</a>]</div>
+<div v-if='!thumbnail' style='float:right;margin:5px;font-size:8pt;'>[<a :href='"/comprende/index.php?title=Item:"+q' title='See/edit the data item for this question' target='_blank'>{{q}}</a>]</div>
 {{i.getLabel()[0]}}
 </h4>
 <h6 class="card-subtitle mb-2 text-muted">{{i.getDescription()[0]}}</h6>
@@ -26,7 +26,7 @@ import i18n from '../i18n.vue'
 
 export default {
 	mixins : [ wikibaseAPImixin ] ,
-	props: [ 'q' , 'options' ] ,
+	props: [ 'q' , 'options' , 'thumbnail' ] ,
 	data : function () { return { i:{} , answers:[] , loaded:false , num_selected:0 , num_required:0 , has_been_answered:false , user } } ,
 	created : function () { this.loadQuestion () } ,
 	components : { 'question-intro':QuestionIntro , answer , i18n } ,
@@ -59,11 +59,12 @@ export default {
 			var wd_answers = me.i.getStringValues ( wdid.p_wd_answer ) ;
 			me.loadItemsSite ( wikidata_site , wd_answers , function () {
 				var answers = [] ;
-				$.each ( (me.i.json.claims[wdid.p_text_answer]||[]) , function ( k , v ) { answers.push ( {q:me.q,sid:v.id,selected:false,fraction:0} ) } ) ;
+				$.each ( (me.i.json.claims[wdid.p_text_answer]||[]) , function ( k , v ) { answers.push ( {q:me.q,sid:v.id,selected:false,fraction:0,} ) } ) ;
 				$.each ( (me.i.json.claims[wdid.p_wd_answer]||[]) , function ( k , v ) { answers.push ( {q:me.q,sid:v.id,selected:false,fraction:0} ) } ) ;
 			
 				me.num_required = 0 ;
 				$.each ( answers , function ( dummy , answer ) {
+					answer.thumbnail = me.thumbnail ;
 					var s = me.i.getStatementByID ( answer.sid ) ;
 					
 					if ( typeof (s.qualifiers||{})[wdid.p_fraction] != 'undefined' ) {

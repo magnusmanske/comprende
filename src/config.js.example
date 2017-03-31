@@ -8,6 +8,39 @@ export var user = {
 	} ,
 	isLoggedIn : function () { return this.userinfo.id > 0 } ,
 	getUserName : function () { return this.userinfo.name } ,
+	getUserPageURL : function () { return './index.php?title=' + encodeURIComponent(this.getUserName()) } ,
+	userSettingsDialog : function () {
+		var me = this ;
+		me.tmp = JSON.stringify ( me.settings ) ;
+		$('#user_fallback_languages').val ( me.settings.fallback_languages.join(',') ) ;
+		$('#user_settings_dialog').modal () ;
+	} ,
+	userSettingsSave : function () {
+		var me = user ; // Huh
+		var flangs = $('#user_fallback_languages').val().split(',') ;
+		var nflangs = [] ;
+		$.each ( flangs , function ( k , v ) {
+			v = $.trim(v.toLowerCase()) ;
+			if ( v != '' ) nflangs.push ( v ) ;
+		} ) ;
+		me.settings.fallback_languages = nflangs ;
+		me.updateLanguageSettings() ;
+		Cookies.set ( 'user_settings' , JSON.stringify(me.settings) ) ;
+		$('#user_settings_dialog').modal ( 'hide' ) ;
+	} ,
+	userSettingsCancel : function () {
+		var me = user ; // Huh
+		var tmp = JSON.parse ( me.tmp ) ;
+		$.each ( tmp , function ( k , v ) { me.settings[k] = v } ) ; // TODO that does not update for some reason
+		$('#user_settings_dialog').modal ( 'hide' ) ;
+	} ,
+	updateLanguageSettings : function () {
+		var me = this ;
+		$.each ( ['fallback_languages','language'] , function ( dummy , v ) {
+			wikibase_default_site[v] = me.settings[v] ;
+			wikidata_site[v] = me.settings[v] ;
+		} ) ;
+	} ,
 	loadUserInfo : function ( callback ) {
 		var me = this ;
 		$.get ( wikibase_default_site.api , {
@@ -20,10 +53,7 @@ export var user = {
 				Cookies.set ( 'user_settings' , JSON.stringify(me.settings) ) ;
 			} else {
 				me.settings = JSON.parse ( Cookies.get('user_settings') ) ;
-				$.each ( ['fallback_languages','language'] , function ( dummy , v ) {
-					wikibase_default_site[v] = me.settings[v] ;
-					wikidata_site[v] = me.settings[v] ;
-				} ) ;
+				me.updateLanguageSettings () ;
 			}
 			me.settings.can_edit = me.isLoggedIn() ;
 		} , 'json' ) . always ( callback ) ;
@@ -38,6 +68,8 @@ export var wdid = {
 	p_part:'P14',
 	p_hint:'P16',
 	p_serial_number:'P17',
+	p_points:'P27',
+	p_points_required:'P28',
 	p_wikipedia_page:'P24',
 	p_wikipedia_section:'P20',
 	p_wikipedia_oldid:'P21',
