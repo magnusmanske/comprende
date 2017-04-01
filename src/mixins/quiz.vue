@@ -6,7 +6,7 @@ import wikibaseAPImixin from '../mixins/wikibaseAPImixin.js'
 import { wdid } from '../config.js'
 
 export default {
-	data : function () { return { questions:[] , loaded:false , progress:{} , wdid , current_question:0 } } ,
+	data : function () { return { questions:[] , loaded:false , progress:{} , wdid , current_question:0 , not_a_quiz:false } } ,
 	mixins : [ wikibaseAPImixin ] ,
 	methods : {
 		initProgress ( statements ) {
@@ -32,6 +32,16 @@ export default {
 			var me = this ;
 			me.quiz = me.getItem ( me.q ) ;
 			me.questions = [] ;
+			
+			// Is it a quiz?
+			var types = me.quiz.getItemValues ( wdid.p_type ) ;
+			me.not_a_quiz = true ;
+			$.each ( types , function ( dummy , q ) {
+				if ( q == wdid.q_quiz ) me.not_a_quiz = false ;
+			} ) ;
+			if ( me.not_a_quiz ) return ;
+			
+			// Get questions
 			var statements = me.quiz.getStatements ( wdid.p_part ) ;
 			var to_load = [] ;
 			$.each ( statements , function ( dummy , s ) {

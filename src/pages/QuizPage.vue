@@ -3,7 +3,10 @@
 <nav-header></nav-header>
 <h1><i18n k='quiz'/></h1>
 
-<div v-if='quiz_is_done'>
+<div v-if='not_a_quiz' class='btn-outline-danger'><i18n k='this is not a quiz'/></div>
+<div v-else-if='(questions.length==0||typeof q=="undefined")'><i18n k='this quiz is empty'/></div>
+
+<div v-else-if='quiz_is_done'>
 	<h2 class="card-title">
 	<div style='float:right;margin:5px;font-size:8pt;'>[<a :href='"/comprende/index.php?title=Item:"+q' title='See/edit the data item for this quiz' target='_blank'>{{q}}</a>]</div>
 	{{quiz.getLabel()[0]}}
