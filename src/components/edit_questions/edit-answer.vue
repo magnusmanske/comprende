@@ -21,7 +21,7 @@
 <div class="form-group row">
 <label class="col-2 col-form-label"><i18n k='item'/></label>
 <div class='col-10'>
-<wikibase-predictive-type v-on:set_item='setItem' :site='wikidata_site' type='item' :text='answer.text.text' :item='answer.text.item'></wikibase-predictive-type>
+<wikibase-predictive-type v-on:set_item='setItem' :site='wikidata_site' type='item' :initial_text='answer.text.text' :initial_item='answer.text.item'></wikibase-predictive-type>
 </div>
 </div>
 </div>

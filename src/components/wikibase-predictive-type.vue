@@ -30,18 +30,23 @@ import wikibaseAPImixin from '../mixins/wikibaseAPImixin.js'
 import { wikibase_default_site } from '../config.js'
 
 export default {
-	props : [ 'item' , 'text' , 'type' , 'site' ] , // FIXME text,item should not be mutated
-	data : function () { return { state:'' , results:[] , last_text:'' , result_selected:-1 } } ,
+	props : [ 'initial_item' , 'initial_text' , 'type' , 'site' , 'nofocus' ] , // FIXME text,item should not be mutated
+	data : function () { return { state:'' , results:[] , last_text:'' , result_selected:-1 , text:'' , item:0 } } ,
 	components : { i18n } ,
 	mixins : [ wikibaseAPImixin ] ,
 	created : function () {
+		if ( typeof initial_text != 'undefined' ) this.text = this.initial_text ;
+		if ( typeof initial_item != 'undefined' ) this.item = this.initial_item ;
 		if ( typeof this.site == 'undefined' || this.site=='' ) this.site = wikibase_default_site ; // Default: main site
+		this.autofocus = !this.nofocus ;
 	} ,
 	mounted : function () {
 		var me = this ;
 		me.showPredictiveListBox() ;
 		var input = me.getQueryInput() ;
-		input.focus() ;
+		if ( me.autofocus ) input.focus() ;
+		else $(me.$el).find('div.wbpt_predictive_list').hide();
+		me.autofocus = true ;
 		me.onKeyLift() ; // First load
 	} ,
 	methods : {

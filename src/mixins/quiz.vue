@@ -6,7 +6,7 @@ import wikibaseAPImixin from '../mixins/wikibaseAPImixin.js'
 import { wdid } from '../config.js'
 
 export default {
-	data : function () { return { questions:[] , loaded:false , progress:{} , wdid , current_question:0 , not_a_quiz:false , sort_order:[] , original_sort_order:'' } } ,
+	data : function () { return { questions:[] , loaded:false , progress:{} , wdid , current_question:0 , not_a_quiz:false , sort_order:[] , original_sort_order:'' , max_question_id:0 } } ,
 	mixins : [ wikibaseAPImixin ] ,
 	computed : {
 		getCurrentQuestionQ : function () {
@@ -29,11 +29,6 @@ export default {
 			me.current_question++ ;
 			if ( me.isQuizDone() ) return ; // This is the end, my friend, the end
 			return me.questions[me.sort_order[me.current_question]] ;
-		} ,
-		wasChanged : function () {
-			var me = this ;
-			if ( me.sort_order.join() != me.original_sort_order ) return true ;
-			return false ;
 		} ,
 		reorderQuestion : function ( from , to ) {
 			var me = this ;
@@ -66,6 +61,7 @@ export default {
 			me.quiz = me.getItem ( me.q ) ;
 			me.questions = [] ;
 			me.sort_order = [] ;
+			me.max_question_id = 0 ;
 			
 			// Is it a quiz?
 			var types = me.quiz.getItemValues ( wdid.p_type ) ;
@@ -85,6 +81,7 @@ export default {
 					question.num = s.qualifiers[wdid.p_serial_number][0].datavalue.value.amount * 1 ;
 				}
 				so.push ( question.num ) ;
+				if ( question.num > me.max_question_id ) me.max_question_id = question.num ;
 				me.questions[question.num] = question ;
 				to_load.push ( question.q ) ;
 			} ) ;

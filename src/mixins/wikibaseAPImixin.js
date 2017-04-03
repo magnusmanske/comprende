@@ -18,6 +18,9 @@ export default {
 		loadItems : function ( items , callback ) {
 			this.loadItemsSite ( wikibase_default_site , items , callback ) ;
 		} ,
+		runWikibaseEdit : function ( params , callback ) {
+			this.runWikibaseEditSite ( wikibase_default_site , params , callback ) ;
+		} ,
 		
 		getCurrentLanguage : function () {
 			return wikibase_default_site.language ;
@@ -124,6 +127,16 @@ export default {
 
 
 
+		runWikibaseEditSite : function ( site , params , callback ) {
+			var me = this ;
+			me.getTokenSite ( site , function ( token ) {
+				params.token = token ;
+				params.format = 'json' ;
+				$.post ( site.api , params , function ( d ) {
+					if ( typeof callback != 'undefined' ) callback ( d ) ;
+				} ) ;
+			} ) ;
+		} ,
 		getTokenSite : function ( site , callback ) {
 			$.get ( site.api , {
 				action:'query',
