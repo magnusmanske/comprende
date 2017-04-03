@@ -6,7 +6,7 @@ import wikibaseAPImixin from '../mixins/wikibaseAPImixin.js'
 import { wdid } from '../config.js'
 
 export default {
-	data : function () { return { questions:[] , loaded:false , progress:{} , wdid , current_question:0 , not_a_quiz:false , sort_order:[] } } ,
+	data : function () { return { questions:[] , loaded:false , progress:{} , wdid , current_question:0 , not_a_quiz:false , sort_order:[] , original_sort_order:'' } } ,
 	mixins : [ wikibaseAPImixin ] ,
 	computed : {
 		getCurrentQuestionQ : function () {
@@ -30,6 +30,11 @@ export default {
 			if ( me.isQuizDone() ) return ; // This is the end, my friend, the end
 			return me.questions[me.sort_order[me.current_question]] ;
 		} ,
+		wasChanged : function () {
+			var me = this ;
+			if ( me.sort_order.join() != me.original_sort_order ) return true ;
+			return false ;
+		} ,
 		reorderQuestion : function ( from , to ) {
 			var me = this ;
 			var so = [] ;
@@ -38,7 +43,7 @@ export default {
 			so.splice ( to , 0 , question_id ) ;
 			me.sort_order = so ;
 		} ,
-		initProgress ( statements ) {
+		initProgress () {
 			var me = this ;
 			me.progress = { total:0 , correct:0 , failed:0 , total_points:0 , points:0 , failed_points:0 , questions_left:0 , points_required:0 } ;
 			me.current_question = 0 ;
@@ -53,7 +58,7 @@ export default {
 				me.progress.total_points += question.points ;
 			} ) ;
 			
-			statements = me.quiz.getStatements ( wdid.p_points_required ) ;
+			var statements = me.quiz.getStatements ( wdid.p_points_required ) ;
 			$.each ( statements , function ( k , v ) { me.progress.points_required = v.mainsnak.datavalue.value.amount*1 } ) ;
 		} ,
 		loadQuestions : function ( callback ) {
@@ -71,6 +76,7 @@ export default {
 			if ( me.not_a_quiz ) return ;
 			
 			// Get questions
+			var so = [] ;
 			var statements = me.quiz.getStatements ( wdid.p_part ) ;
 			var to_load = [] ;
 			$.each ( statements , function ( dummy , s ) {
@@ -78,13 +84,23 @@ export default {
 				if ( typeof ((s.qualifiers||{})[wdid.p_serial_number]||[])[0] != 'undefined' ) {
 					question.num = s.qualifiers[wdid.p_serial_number][0].datavalue.value.amount * 1 ;
 				}
-				me.sort_order.push ( question.num ) ;
+				so.push ( question.num ) ;
 				me.questions[question.num] = question ;
 				to_load.push ( question.q ) ;
 			} ) ;
 			
-			me.initProgress ( statements ) ;
+			var so_quiz = me.quiz.getStringValues ( wdid.p_sort_order ) ;
+			if ( so_quiz.length > 0 ) {
+				so = [] ;
+				$.each ( so_quiz[0].split(',') , function ( k , v ) {
+					so.push ( parseInt ( $.trim ( v ) ) ) ;
+				} ) ;
+			}
+			me.sort_order = so ;
+
+			me.original_sort_order = me.sort_order.join(',') ;
 			
+			me.initProgress () ;
 			me.loadItems ( to_load , callback ) ;
 		} ,
 		loadQuiz : function ( callback ) {
