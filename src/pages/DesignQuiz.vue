@@ -4,16 +4,18 @@
 <h1><i18n k='quiz'/></h1>
 
 <h3>Questions</h3>
-<div style='display:grid;grid-template-columns: 1fr 1fr;'>
+<div v-if='loaded' class='design_quiz_question_container'>
 
-<div v-for='(question,num) in questions_compact' class='design_quiz_question_wrapper'>
-	<div class='design_quiz_question_float'>
-		#{{question.num}}; {{question.points}} points
+<div v-for='(question_id,dummy) in sort_order' :key='question_id' class='design_quiz_question_wrapper'>
+	<div class='design_quiz_question_header'>
+		<i18n k='quetion_counts' :params='[questions[question_id].points]'></i18n>
 	</div>
-	<question style='zoom:0.5;' :q='question.q' thumbnail='1'></question>
+	<question style='zoom:0.5;' :q='questions[question_id].q' thumbnail='1'></question>
 </div>
 
 </div>
+
+<div v-else><i18n k='loading'/></div>
 
 </div>
 </template>
@@ -27,32 +29,27 @@ import quiz_mixin from '../mixins/quiz.vue'
 export default {
 	props : [ 'q' ] ,
 	components : { question , i18n , 'nav-header':NavHeader } ,
-	data : function () { return { questions_compact:[] } } ,
+	data : function () { return {} } ,
 	mixins : [ quiz_mixin ] ,
 	created : function () {
 		var me = this ;
-		this.loadQuiz ( me.quizIsLoaded ) ;
+		this.loadQuiz () ;
 	} ,
-	mounted : function () {
+	updated : function () {
 		var me = this ;
-		$(me.$el).find('a').addClass('disabled') ;
+		var container = $(me.$el).find('div.design_quiz_question_container') ;
+		Sortable.create ( container.get(0) , {
+			draggable : '.design_quiz_question_wrapper' ,
+			onUpdate : function ( ev ) {
+				me.reorderQuestion ( ev.oldIndex , ev.newIndex ) ;
+			}
+		} ) ;
 	} ,
-	methods : {
-		quizIsLoaded : function () {
-			var me = this ;
-			me.questions_compact = [] ;
-			$.each ( me.questions , function ( k , v ) {
-				if ( typeof v == 'undefined' ) return ;
-				me.questions_compact.push ( v ) ;
-			} ) ;
-		} ,
-	} 
-
 }
 </script>
 
 <style>
-div.design_quiz_question_float {
+div.design_quiz_question_header {
 	background-color:white;
 	width:100%;
 	padding:2px;
@@ -62,5 +59,10 @@ div.design_quiz_question_wrapper {
 	margin:3px;
 	border:2px solid black;
 	vertical-align:top;
+	cursor:pointer;
+}
+div.design_quiz_question_container {
+	display:grid;
+	grid-template-columns: 1fr 1fr;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class='question_container'>
 <div v-if='loaded' class='question'>
 
 <div style='margin-bottom:10px;'>

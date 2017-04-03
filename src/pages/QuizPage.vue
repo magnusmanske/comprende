@@ -6,7 +6,7 @@
 <div v-if='not_a_quiz' class='btn-outline-danger'><i18n k='this is not a quiz'/></div>
 <div v-else-if='(questions.length==0||typeof q=="undefined")'><i18n k='this quiz is empty'/></div>
 
-<div v-else-if='quiz_is_done'>
+<div v-else-if='isQuizDone()'>
 	<h2 class="card-title">
 	<div style='float:right;margin:5px;font-size:8pt;'>[<a :href='"/comprende/index.php?title=Item:"+q' title='See/edit the data item for this quiz' target='_blank'>{{q}}</a>]</div>
 	{{quiz.getLabel()[0]}}
@@ -33,7 +33,7 @@
 	{{quiz.getLabel()[0]}}
 	</h2>
 	<p class="card-title">{{quiz.getDescription()[0]}}</p>
-	<question :q='questions[current_question].q' auto_show_choices='1'></question>
+	<question :q='getCurrentQuestionQ' auto_show_choices='1'></question>
 
 	<div style='margin-bottom:5px;'>
 		<div v-if='progress.total' class='progress'>
@@ -87,8 +87,15 @@ Vue.use(VueGesture)
 export default {
 	mixins : [ wikibaseAPImixin , quiz_mixin ] ,
 	props : [ 'q' ] ,
-	data : function () { return { quiz:{} , show_next_question_button:false , last_answer_correct:false , quiz_is_done:false } } ,
+	data : function () { return { quiz:{} , show_next_question_button:false , last_answer_correct:false } } ,
 	created : function () {
+		var me = this ;
+		$('body').swipe ( { // See https://github.com/mattbryson/TouchSwipe-Jquery-Plugin
+			swipe : function ( event , direction ) {
+				if ( direction == 'left' ) me.onSwipeLeft() ;
+			}
+		} ) ;
+
 		question_bus.$on ( 'answered' , this.wasAnswered ) ;
 		this.loadQuiz() ;
 	} ,
@@ -102,27 +109,20 @@ export default {
 			this.last_answer_correct = correctly ;
 			this.show_next_question_button = true ;
 		} ,
+		showNextQuestion : function () {
+			var me = this ;
+			var nq = me.getNextQuestion() ;
+		} ,
 		wasAnswered : function ( correctly , percentage ) {
 			var me = this ;
-			var points = me.questions[me.current_question].points * percentage / 100 ;
+			var cq = me.getCurrentQuestion() ;
+			var points = cq.points * percentage / 100 ;
 			me.progress.points += points ;
-			me.progress.failed_points += me.questions[me.current_question].points - points ;
+			me.progress.failed_points += cq.points - points ;
 			if ( correctly ) me.progress.correct++ ;
 			else me.progress.failed++ ;
 			me.progress.questions_left-- ;
 			me.canAdvance ( correctly ) ;
-		} ,
-		showNextQuestion : function () {
-			var me = this ;
-			me.show_next_question_button = false ;
-			for ( me.current_question++ ; me.current_question < me.questions.length ; me.current_question++ ) {
-				if ( typeof me.questions[me.current_question] == 'undefined' ) continue ;
-				break ;
-			}
-			if ( me.current_question == me.questions.length ) return me.quizIsDone() ;
-		} ,
-		quizIsDone : function () {
-			this.quiz_is_done = true ;
 		} ,
 	} ,
 }
