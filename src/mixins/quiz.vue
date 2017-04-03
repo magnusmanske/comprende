@@ -42,7 +42,8 @@ export default {
 			var me = this ;
 			me.progress = { total:0 , correct:0 , failed:0 , total_points:0 , points:0 , failed_points:0 , questions_left:0 , points_required:0 } ;
 			me.current_question = 0 ;
-			$.each ( me.questions , function ( dummy , question ) {
+			$.each ( me.sort_order , function ( dummy , qid ) {
+				var question = me.questions[qid] ;
 				if ( typeof question == 'undefined' ) return ;
 				var s = question.statement ;
 				if ( typeof ((s.qualifiers||{})[wdid.p_points]||[])[0] != 'undefined' ) {
@@ -52,7 +53,7 @@ export default {
 				me.progress.questions_left++ ;
 				me.progress.total_points += question.points ;
 			} ) ;
-			
+
 			var statements = me.quiz.getStatements ( wdid.p_points_required ) ;
 			$.each ( statements , function ( k , v ) { me.progress.points_required = v.mainsnak.datavalue.value.amount*1 } ) ;
 		} ,

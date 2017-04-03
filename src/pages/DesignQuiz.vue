@@ -9,6 +9,7 @@
 <div v-if='loaded'>
 
 	<div>
+		<router-link target='_blank' class='btn btn-outline-success' to='/new/questions'><i18n k='create new questions'/></router-link>
 		<button class='btn btn-outline-danger' @click.prevent='removeCurrentQuestion'><i18n k='remove question from quiz'/></button>
 		<span v-if='wasChanged()'><button class='btn btn-outline-primary' @click.prevent='saveChanges'><i18n k='save changes'/></button></span>
 	</div>
@@ -48,7 +49,7 @@ import predictive from '../components/wikibase-predictive-type.vue'
 export default {
 	props : [ 'q' ] ,
 	components : { question , i18n , 'nav-header':NavHeader , 'wikibase-predictive-type':predictive } ,
-	data : function () { return { actions:[] , item2add:0 , wikibase_default_site } } ,
+	data : function () { return { actions:[] , item2add:'' , wikibase_default_site } } ,
 	mixins : [ quiz_mixin ] ,
 	created : function () {
 		var me = this ;
@@ -81,6 +82,7 @@ export default {
 				me.questions[question.num] = question ;
 				me.sort_order.push ( question.num ) ;
 				me.actions.push ( { type:'add_question' , question:me.questions[question.num] } ) ;
+				me.initProgress() ;
 			} ) ;
 		} ,
 		wasChanged : function () {
@@ -96,6 +98,7 @@ export default {
 //			me.questions[qu] = undefined ;
 			me.sort_order.splice ( me.current_question , 1 ) ;
 			if ( me.current_question > 0 && me.current_question >= me.sort_order.length ) me.current_question-- ;
+			me.initProgress() ;
 		} ,
 		saveChanges : function () {
 			var me = this ;
@@ -134,6 +137,14 @@ export default {
 				}
 				return ;
 			}
+			
+			function finish () {
+				me.actions = [] ;
+				me.item2add = '' ;
+				me.reloadItems ( [ me.q ] , function () {
+					me.loadQuiz() ;
+				} ) ;
+			}
 
 			// No more actions? Save sort order!
 			var so = me.sort_order.join(',') ;
@@ -167,11 +178,11 @@ export default {
 						console.log ( d ) ;
 						alert ( d.error.info ) ;
 					}
-					me.reloadItems ( [ me.q ] , function () {
-						me.loadQuiz() ;
-					} ) ;
+					finish() ;
 				} ) ;
 				
+			} else {
+				finish() ;
 			}
 		} ,
 	} ,

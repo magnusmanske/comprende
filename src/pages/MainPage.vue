@@ -4,6 +4,7 @@
 <ul>
 <li><router-link to='/question/Q5'><i18n k='example_question'/></router-link></li>
 <li><router-link to='/quiz/Q70'><i18n k='example_quiz'/></router-link></li>
+<li><router-link to='/design/quiz/Q70'><i18n k='design example quiz'/></router-link></li>
 <li><router-link to='/new/questions'><i18n k='create new questions'/></router-link> (<i18n k='with or without quiz'/>)</li>
 <li><i18n k='import questions from other formats'></i18n>
 	<ul>
