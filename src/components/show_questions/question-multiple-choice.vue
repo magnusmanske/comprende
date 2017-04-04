@@ -57,7 +57,8 @@ export default {
 			me.answers = [] ;
 			me.i = me.getItem ( me.q ) ;
 			var wd_answers = me.i.getStringValues ( wdid.p_wd_answer ) ;
-			me.loadItemsSite ( wikidata_site , wd_answers , function () {
+			
+			function fin () {
 				var answers = [] ;
 				$.each ( (me.i.json.claims[wdid.p_text_answer]||[]) , function ( k , v ) { answers.push ( {q:me.q,sid:v.id,selected:false,fraction:0} ) } ) ;
 				$.each ( (me.i.json.claims[wdid.p_wd_answer]||[]) , function ( k , v ) { answers.push ( {q:me.q,sid:v.id,selected:false,fraction:0} ) } ) ;
@@ -84,7 +85,10 @@ export default {
 			
 				me.answers = me.shuffle ( answers ) ;
 				me.loaded = true ;
-			} ) ;
+			}
+			
+			if ( wd_answers.length > 0 ) me.loadItemsSite ( wikidata_site , wd_answers , fin ) ;
+			else fin() ;
 		}
 	} ,
 	computed : {
