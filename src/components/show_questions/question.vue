@@ -3,7 +3,7 @@
 <div v-if='loaded' class='question'>
 
 <div style='margin-bottom:10px;'>
-<question-label-image v-if='type==wdid.q_label_item_question' :q='q' v-on:ready_to_check='readyCheckChoices' :options='options' :thumbnail='thumbnail'></question-label-image>
+<!--<question-label-image v-if='type==wdid.q_label_item_question' :q='q' v-on:ready_to_check='readyCheckChoices' :options='options' :thumbnail='thumbnail'></question-label-image>-->
 <question-multiple-choice v-if='type==wdid.q_multiple_choice_question' :q='q' v-on:ready_to_check='readyCheckChoices' :options='options' :thumbnail='thumbnail'></question-multiple-choice>
 <div v-else><i18n k='Unknown question type'></i18n>: {{type}}</div>
 </div>

@@ -75,10 +75,12 @@ export var wdid = {
 	p_wikipedia_oldid:'P21',
 	p_translation_key:'P25',
 	p_translation:'P26',
+	p_sort_order:'P29',
 	
 	q_i18n:'Q77',
 	q_label_item_question:'Q3',
 	q_multiple_choice_question:'Q4',
+	q_questions:['Q3','Q4'],
 	q_html:'Q7',
 	q_quiz:'Q8',
 }

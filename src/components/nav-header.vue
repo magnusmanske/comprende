@@ -9,14 +9,15 @@
 
 	<div class="collapse navbar-collapse" id="navbarSupportedContent">
 		<ul class="navbar-nav mr-auto">
-			<li v-if='user.isLoggedIn()' class="nav-item dropdown">
-				<span style='cursor:pointer;' class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{user.getUserName()}}</span>
+			<li class="nav-item dropdown">
+				<span v-if='user.isLoggedIn()' style='cursor:pointer;' class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{user.getUserName()}}</span>
+				<span v-else class="nav-item"><a target='_blank' href='./index.php?title=Special:Login'>Log in</a></span>
 				<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-					<a href='#' class="dropdown-item" @click.prevent='user.userSettingsDialog'><i18n k='user settings'/></a>
-					<a class="dropdown-item" :href="user.getUserPageURL()"><i18n k='user page'/></a>
+					<a v-if='user.isLoggedIn()' class="dropdown-item" href='#' @click.prevent='user.userSettingsDialog'><i18n k='user settings'/></a>
+					<a v-if='user.isLoggedIn()' class="dropdown-item" :href="user.getUserPageURL()"><i18n k='user page'/></a>
+					<a href='https://github.com/magnusmanske/comprende' target='_blank' class='dropdown-item external'><i18n k='git'/></a>
 				</div>
 			</li>
-			<li v-else class="nav-item"><a target='_blank' href='./index.php?title=Special:Login'>Log in</a></li>
 		</ul>
 	</div>
 	<div class="collapse navbar-collapse" id="navbarSupportedContent"></div>
