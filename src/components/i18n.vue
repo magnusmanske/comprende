@@ -54,6 +54,7 @@ export default {
 			return ret ;
 		} ,
 		tr : function ( key , params ) {
+			if ( $.trim(key) == '' ) return '' ;
 			var tr = this.getTranslation ( key , params ) ;
 			if ( typeof tr == 'undefined' ) return 'no translation: ' + key ;
 			return tr.translation + (tr.language==this.getMainLanguage()?'':' ['+tr.language+']') ;

@@ -1,6 +1,6 @@
 <template id='wikibase-predictive-type-template'>
 <div>
-<input type='text' class='form-control col-6 wbpt_query' style='display:inline-block' v-model='text' @keyup='onKeyLift' @keyup.down.prevent='onKeyDown' @keyup.up.prevent='onKeyUp' @keyup.enter.prevent='onEnter' />
+<input type='text' class='form-control col-6 wbpt_query' style='display:inline-block' :placeholder='placeholder' v-model='text' @keyup='onKeyLift' @keyup.down.prevent='onKeyDown' @keyup.up.prevent='onKeyUp' @keyup.enter.prevent='onEnter' />
 <span v-if='typeof item!="undefined" && item!=""' class='wbpt_item_id'>[<a target='_blank' :href='"https://www.wikidata.org/wiki/"+item'>{{item}}</a>]</span>
 <div v-if='state!="chosen"' class='wbpt_predictive_list'>
 <div v-if='state==""' style='color:#DDD'><i><i18n k='empty'/></i></div>
@@ -30,15 +30,16 @@ import wikibaseAPImixin from '../mixins/wikibaseAPImixin.js'
 import { wikibase_default_site } from '../config.js'
 
 export default {
-	props : [ 'initial_item' , 'initial_text' , 'type' , 'site' , 'nofocus' ] , // FIXME text,item should not be mutated
-	data : function () { return { state:'' , results:[] , last_text:'' , result_selected:-1 , text:'' , item:0 } } ,
+	props : [ 'initial_item' , 'initial_text' , 'type' , 'site' , 'nofocus' , 'placeholder_key' ] , // FIXME text,item should not be mutated
+	data : function () { return { state:'' , results:[] , last_text:'' , result_selected:-1 , text:'' , item:0 , placeholder:'' } } ,
 	components : { i18n } ,
-	mixins : [ wikibaseAPImixin ] ,
+	mixins : [ wikibaseAPImixin , i18n ] ,
 	created : function () {
 		if ( typeof initial_text != 'undefined' ) this.text = this.initial_text ;
 		if ( typeof initial_item != 'undefined' ) this.item = this.initial_item ;
 		if ( typeof this.site == 'undefined' || this.site=='' ) this.site = wikibase_default_site ; // Default: main site
 		this.autofocus = !this.nofocus ;
+		if ( this.placeholder_key != '' ) this.placeholder = this.tr ( this.placeholder_key ) ;
 	} ,
 	mounted : function () {
 		var me = this ;

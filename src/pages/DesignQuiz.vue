@@ -14,7 +14,7 @@
 		<span v-if='wasChanged()'><button class='btn btn-outline-primary' @click.prevent='saveChanges'><i18n k='save changes'/></button></span>
 	</div>
 	<div>
-		<wikibase-predictive-type style='display:inline;' v-on:set_item='setItemFromPredictive' nofocus='1' :site='wikibase_default_site' type='item'></wikibase-predictive-type>
+		<wikibase-predictive-type style='display:inline;' placeholder_key='search for questions' v-on:set_item='setItemFromPredictive' nofocus='1' :site='wikibase_default_site' type='item'></wikibase-predictive-type>
 		<button v-if='item2add!=""' class='btn btn-outline-success' @click.prevent='addQuestion'><i18n k='add question to quiz'/></button>
 	</div>
 
