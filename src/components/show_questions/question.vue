@@ -3,8 +3,8 @@
 <div v-if='loaded' class='question'>
 
 <div style='margin-bottom:10px;'>
-<!--<question-label-image v-if='type==wdid.q_label_item_question' :q='q' v-on:ready_to_check='readyCheckChoices' :options='options' :thumbnail='thumbnail'></question-label-image>-->
-<question-multiple-choice v-if='type==wdid.q_multiple_choice_question' :q='q' v-on:ready_to_check='readyCheckChoices' :options='options' :thumbnail='thumbnail'></question-multiple-choice>
+<question-label-image v-if='type==wdid.q_label_item_question' :q='q' v-on:ready_to_check='readyCheckChoices' :options='options' :thumbnail='thumbnail'></question-label-image>
+<question-multiple-choice v-else-if='type==wdid.q_multiple_choice_question' :q='q' v-on:ready_to_check='readyCheckChoices' :options='options' :thumbnail='thumbnail'></question-multiple-choice>
 <div v-else><i18n k='Unknown question type'></i18n>: {{type}}</div>
 </div>
 
@@ -22,6 +22,7 @@
 <script>
 import i18n from '../i18n.vue'
 import QuestionMultipleChoice from './question-multiple-choice.vue' ;
+import QuestionLabelImage from './question-label-image.vue' ;
 import { wdid } from '../../config.js'
 import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
 
@@ -30,7 +31,7 @@ export default {
 	props : [ 'q' , 'auto_show_choices' , 'thumbnail' ] ,
 	data : function () { return { type:'' , loaded:false , can_check_choices:false , options : {} , wdid:wdid } } ,
 	created : function () { this.loadQuestion() } ,
-	components : { 'question-multiple-choice':QuestionMultipleChoice , i18n } ,
+	components : { 'question-multiple-choice':QuestionMultipleChoice , 'question-label-image':QuestionLabelImage , i18n } ,
 	methods : {
 		readyCheckChoices : function () {
 			this.can_check_choices = true ;

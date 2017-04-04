@@ -36,13 +36,13 @@
 		<div><i18n k='drag drop questions'/></div>
 		<div class='design_quiz_question_container'>
 
-			<div v-for='(question_id,num) in sort_order' :key='question_id' class='design_quiz_question_wrapper' :style='(num==current_question?"border-color:#2F74D0;":"")' @click.prevent='current_question=num'>
-				<div class='design_quiz_question_header'>
+			<div v-for='(question_id,num) in sort_order' :key='question_id' class='card design_quiz_question_wrapper' :style='(num==current_question?"border-color:#2F74D0;":"")' @click.prevent='current_question=num'>
+				<div class='design_quiz_question_header card-header'>
 					[<router-link :to='"/question/"+questions[question_id].q'>{{questions[question_id].q}}</router-link>] 
 					<i18n k='quetion_counts' :params='[questions[question_id].points]'></i18n>
 					<small>[<a href='#' @click.prevent='changePoints(num)'><i18n k='edit'/></a>]</small>
 				</div>
-				<question style='zoom:0.5;' :q='questions[question_id].q' thumbnail='1'></question>
+				<question class='zoom_half' :q='questions[question_id].q' thumbnail='1'></question>
 			</div>
 
 		</div>
@@ -243,7 +243,7 @@ export default {
 
 <style>
 div.design_quiz_question_header {
-	background-color:white;
+/*	background-color:white;*/
 	width:100%;
 	padding:2px;
 	border-bottom:1px solid black;
@@ -257,5 +257,24 @@ div.design_quiz_question_wrapper {
 div.design_quiz_question_container {
 	display:grid;
 	grid-template-columns: 1fr 1fr;
+}
+.zoom_half {
+	zoom:0.5;
+
+/*
+-moz-transform: scale(0.5,0.5);
+-ms-transform: scale(0.5,0.5);
+-webkit-transform: scale(0.5,0.5);
+-o-transform: scale(0.5,0.5);
+transform: scale(0.5,0.5);
+-moz-transform-origin: left top;
+-ms-transform-origin: left top;
+-webkit-transform-origin: left top;
+transform-origin: left top;
+*/
+	
+	/* Firefox does not support zoom yet. This is a hack-around, but it would require width and height at 200%, which breaks Chrome
+	-moz-transform: scale(0.5);
+	-moz-transform-origin: 0px 0px;*/
 }
 </style>
