@@ -1,7 +1,7 @@
 <template>
 <div>
 <div class="card-block">
-<h4 class="card-title"><i18n k='Multiple choice question'/></h4>
+<h4 class="card-title"><i18n k='label image question'/></h4>
 
 <string-edit label='Label' placeholder='A name for the question' :value='question.label' noempty='1'></string-edit>
 <string-edit label='Text' placeholder='The actual text of the question' :value='question.text' noempty='1'></string-edit>
@@ -9,7 +9,10 @@
 
 </div><div class="card-block">
 
-<edit-answer v-for='(answer,num) in question.answers' :key='num' :answer='answer' :num='num' v-on:delete_answer='deleteAnswer'></edit-answer>
+<!--<edit-answer v-for='(answer,num) in question.answers' :key='num' :answer='answer' :num='num' v-on:delete_answer='deleteAnswer'></edit-answer>-->
+<div>
+<input type='text' :v-model='image' />
+</div>
 
 <button class='btn btn-sm btn-outline-success' @click.prevent='addAnswer'>Add answer</button>
 
@@ -26,6 +29,7 @@ import EditAnswer from './edit-answer.vue'
 export default {
 	props : [ 'question' ] ,
 	components : { 'string-edit':StringEdit , 'edit-answer':EditAnswer , i18n } ,
+	data : function () { return { image:'' } } ,
 	methods : {
 		addAnswer : function () {
 			this.question.answers.push ( {
@@ -39,6 +43,11 @@ export default {
 			this.question.answers.splice ( num , 1 ) ;
 		}
 	} ,
+	watch : {
+		image : function () {
+			console.log ( this.image ) ;
+		} ,
+	}
 }
 </script>
 

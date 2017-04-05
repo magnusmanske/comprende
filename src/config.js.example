@@ -61,6 +61,9 @@ export var user = {
 }
 
 export var wdid = {
+	p_image:'P2',
+	p_crop:'P30',
+	p_position:'P31',
 	p_type:'P4',
 	p_fraction:'P5',
 	p_text_answer:'P12',

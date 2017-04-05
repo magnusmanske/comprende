@@ -14,6 +14,7 @@
 </ul>
 
 <edit-question-multiple-choice v-if='question.type==wdid.q_multiple_choice_question' :question='question'></edit-question-multiple-choice>
+<edit-question-label-image v-else-if='question.type==wdid.q_label_item_question' :question='question'></edit-question-label-image>
 <div v-else>Unknown question type "{{question.type}}"</div>
 
 <div class="card-block">
@@ -31,12 +32,13 @@ import i18n from '../i18n.vue'
 import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
 import { wdid } from '../../config.js'
 import EditQuestionMultipleChoice from './edit-question-multiple-choice.vue'
+import EditQuestionLabelImage from './edit-question-label-image.vue'
 
 export default {
 	mixins : [ wikibaseAPImixin ] ,
 	props : [ 'question' ] ,
 	data : function () { return { problems:{label_description_collision:false,empty_label_description:false,minimum_answers:false,fractions_100:false,blank_answers:false} , ld_double:'' , wdid } } ,
-	components : { 'edit-question-multiple-choice':EditQuestionMultipleChoice , i18n } ,
+	components : { 'edit-question-multiple-choice':EditQuestionMultipleChoice , 'edit-question-label-image':EditQuestionLabelImage , i18n } ,
 	created : function () {
 		this.checkLabelDescription()
 	} ,

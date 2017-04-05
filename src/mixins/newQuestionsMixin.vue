@@ -21,6 +21,17 @@ export default {
 				add2quiz : true ,
 				can_be_imported : true ,
 			} ;
+			if ( type == wdid.q_label_item_question ) ret = {
+				id : me.question_id_counter++ ,
+				type : type ,
+				label : { text:'' , language:me.getCurrentLanguage() , item:'' } ,
+				text : { text:'' , language:me.getCurrentLanguage() , item:'' } ,
+				hint : { text:'' , language:me.getCurrentLanguage() , item:'' } ,
+				answers : [] ,
+				import2wb : true ,
+				add2quiz : true ,
+				can_be_imported : true ,
+			} ;
 			$.each ( (props||{}) , function ( k , v ) {
 				ret[k] = v ;
 			} ) ;

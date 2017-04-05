@@ -8,6 +8,7 @@
 <div class="card card-stack">
 <div class="card-block">
 <button class='btn btn-outline-success' @click.prevent='addNewQuestion(wdid.q_multiple_choice_question)'><i18n k='Add new multiple-choice question'/></button>
+<button class='btn btn-outline-success' @click.prevent='addNewQuestion(wdid.q_label_item_question)'><i18n k='Add new image label question'/></button>
 </div></div>
 
 
@@ -188,6 +189,8 @@ export default {
 			if ( type == wdid.q_multiple_choice_question ) { // Two default answers
 				new_question.answers.push ( { fraction : { text:'100' }, text : { text:'' , item:'' , language:wikibase_default_site.language } , feedback : { text:'' , item:'' , language:wikibase_default_site.language } , type : wdid.p_text_answer } ) ;
 				new_question.answers.push ( { fraction : { text:'0' }, text : { text:'' , item:'' , language:wikibase_default_site.language } , feedback : { text:'' , item:'' , language:wikibase_default_site.language } , type : wdid.p_text_answer } ) ;
+			}
+			if ( type == wdid.q_label_item_question ) {
 			}
 			me.questions.push ( new_question ) ;
 		} ,
