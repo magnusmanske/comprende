@@ -9,7 +9,7 @@
 <h6 class="card-subtitle mb-2 text-muted">{{subtitle}}</h6>
 <question-intro :q='q'></question-intro>
 
-<div v-if='image!=""' style='display:table-row'>
+<div v-if='image!=""' class='qli_payload_container'>
 <div class='qli_image_container'>
 <image-with-labels :image='image' :width='width' :height='width' :crop='crop' :answers='answers' v-on:answer-clicked='onNumberClicked'></image-with-labels>
 </div>
@@ -38,9 +38,15 @@ export default {
 	mixins : [ wikibaseAPImixin , QuestionMixin ] ,
 	props: [ 'q' , 'options' , 'thumbnail' ] ,
 	data : function () { return { i:{} , answers:[] , loaded:false , num_selected:0 , num_required:0 , has_been_answered:false , image:'' , width:600 , crop:'' , user , chosen_answer:undefined , chosen_number:undefined } } ,
-	created : function () { this.loadQuestion () } ,
+	created : function () { this.loadQuestion() } ,
+	updated : function () { this.checkWidth() } ,
 	components : { 'question-intro':QuestionIntro , i18n , 'image-with-labels':ImageWithLabels , answer } ,
 	methods : {
+		checkWidth : function () {
+//			var w = parseInt($($(this.$el).find('div.card-block').get(0)).width()) ;
+			var w = parseInt($('#app').width()) ;
+			if ( w < this.width ) this.width = w-20 ;
+		} ,
 		setupImage : function () {
 			var me = this ;
 			var images = me.i.getStringValues ( wdid.p_image ) ;
@@ -54,6 +60,7 @@ export default {
 		} ,
 		loadQuestion : function () {
 			var me = this ;
+			me.checkWidth() ;
 			me.has_been_answered = false ;
 			me.num_selected = 0 ;
 			me.loaded = false ;
@@ -220,17 +227,29 @@ export default {
 
 <style>
 div.qli_image_container {
-	display:table-cell;
-	width:66%;
 	vertical-align:top;
 }
 div.qli_answers_container {
-	display:table-cell;
-	width:33%;
-	max-width:33%;
 	vertical-align:top;
 	margin-left:5px;
 	overflow:auto;
-	zoom:0.8;
+}
+
+@media screen and (orientation:portrait) {
+}
+@media screen and (orientation:landscape) {
+	div.qli_answers_container {
+		display:table-cell;
+		width:33%;
+		max-width:33%;
+		zoom:0.8;
+	}
+	div.qli_image_container {
+		display:table-cell;
+		width:66%;
+	}
+	div.qli_payload_container {
+		display:table-row;
+	}
 }
 </style>
