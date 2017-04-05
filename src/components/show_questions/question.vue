@@ -43,7 +43,7 @@ export default {
 		loadQuestion () {
 			var me = this ;
 			me.loaded = false ;
-			me.options = { show_choices:false } ;
+			me.options = { show_choices:false , autocomplete_last_possible:true } ;
 			me.loadItems ( [me.q] , function () {
 				var i = me.getItem(me.q) ;
 				me.type = 'none set' ;

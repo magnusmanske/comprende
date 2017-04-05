@@ -154,6 +154,22 @@ export default {
 			me.answers[me.chosen_number].number_focus = false ;
 			me.chosen_answer = undefined ;
 			me.chosen_number = undefined ;
+			if ( me.options.autocomplete_last_possible ) {
+				var unmatched = [] ;
+				var used_numbers = {} ;
+				$.each ( me.answers , function ( k , v ) {
+					if ( v.check_text == '' ) unmatched.push ( k ) ;
+					else used_numbers[v.check_text] = 1 ;
+				} ) ;
+				if ( unmatched.length == 1 ) {
+					var available_number ;
+					$.each ( me.answers , function ( k , v ) {
+						if ( typeof used_numbers[v.num] == 'undefined' ) available_number = v.num ;
+					} ) ;
+					me.answers[unmatched[0]].check_text = available_number ;
+					me.answers[unmatched[0]].selected = true ;
+				}
+			}
 		} ,
 	} ,
 	computed : {
