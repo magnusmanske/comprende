@@ -67,7 +67,7 @@ export default {
 			var wd_answers = me.i.getStringValues ( wdid.p_wd_answer ) ;
 			
 			function getNewAnswer ( sid ) {
-				return {q:me.q,sid:sid,selected:false,fraction:0,single_focus:true,has_focus:false,num:0,check_text:'',number_focus:false} ;
+				return {q:me.q,sid:sid,selected:false,fraction:-1,single_focus:true,has_focus:false,num:0,check_text:'',number_focus:false} ;
 			}
 
 			function fin () {
@@ -76,6 +76,8 @@ export default {
 				$.each ( (me.i.json.claims[wdid.p_wd_answer]||[]) , function ( k , v ) { answers.push ( getNewAnswer(v.id) ) } ) ;
 			
 				me.num_required = 0 ;
+				var sum_fraction = 0 ;
+				var no_fraction = 0 ;
 				var nums = [] ;
 				$.each ( answers , function ( dummy , answer ) {
 //					answer.thumbnail = me.thumbnail ;//??
@@ -89,8 +91,9 @@ export default {
 					if ( typeof (s.qualifiers||{})[wdid.p_fraction] != 'undefined' ) {
 						var qual = s.qualifiers[wdid.p_fraction][0] ;
 						answer.fraction = qual.datavalue.value.amount * 1 ;
+						sum_fraction += qual.datavalue.value.amount * 1 ;
 					}
-//					if ( answer.fraction > 0 ) 
+					if ( answer.fraction < 0 ) no_fraction++ ;
 					me.num_required++ ;
 					
 					if ( typeof (s.qualifiers||{})[wdid.p_hint] != 'undefined' ) {
@@ -103,11 +106,19 @@ export default {
 					nums.push ( dummy+1 ) ;
 				} ) ;
 				
+				if ( no_fraction > 0 ) {
+					var remaining_fraction = (100-sum_fraction) / no_fraction ;
+					$.each ( answers , function ( k , v ) {
+						if ( v.fraction == -1 ) v.fraction = remaining_fraction ;
+					} ) ;
+				}
+				
 				nums = me.shuffle ( nums ) ;
 				me.answers = me.shuffle ( answers ) ;
 				$.each ( me.answers , function ( k , v ) {
 					v.num = nums.pop() ;
 				} ) ;
+
 				me.loaded = true ;
 			}
 			
@@ -189,7 +200,7 @@ export default {
 				var sum = 0 ;
 				$.each ( me.answers , function ( k , v ) {
 					cnt += v.selected ? 1 : 0 ;
-					if ( v.selected ) sum += 1 ;
+					if ( v.num == v.check_text ) sum += v.fraction*1 ;
 				} ) ;
 				me.num_selected = cnt ;
 				if ( me.num_required>0 && me.num_required==me.num_selected ) {

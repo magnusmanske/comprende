@@ -51,7 +51,7 @@ export default {
 				if ( types.length > 0 ) me.type = types[0] ;
 				me.loaded = true ;
 			} ) ;
-		}
+		} ,
 	} ,
 	watch : {
 		q : function () { this.loadQuestion() }
