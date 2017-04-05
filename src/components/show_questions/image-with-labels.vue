@@ -1,11 +1,12 @@
 <template>
 <div style='position:relative;overflow:hidden;'>
 <div v-if='img_loaded' style='height:0px;position:relative;'>
-	<div v-for='(answer,answer_id) in answers' :style='getAnswerStyle(answer)' class='image_with_labels_answer' @click.prevent='$emit("answer-clicked",answer_id)'>{{answer.num}}</div>
+	<div class='image_with_labels_answer image_with_labels_toggler' @click.prevent='show_numbers=!show_numbers'>{{show_numbers?'○':'●'}}</div>
+	<div v-if='show_numbers' v-for='(answer,answer_id) in answers' :style='getAnswerStyle(answer)' class='image_with_labels_answer' @click.prevent='$emit("answer-clicked",answer_id)'>{{answer.num}}</div>
 </div>
 <div v-else><i><i18n k='loading'/></i></div>
 <div :style='{width:w+"px","max-height":h+"px"}' class='image_with_labels_container'>
-<img @load='imageLoaded' class='card-img-bottom image_with_labels' :src='url'>
+<img @load='imageLoaded' class='card-img-bottom image_with_labels' :src='url' />
 </div>
 </div>
 </template>
@@ -16,7 +17,7 @@ import i18n from '../i18n.vue'
 
 export default {
 	props : [ 'image' , 'crop' , 'width' , 'height' , 'answers' ] ,
-	data : function () { return { cropped:{} , url:'' , w:0 , h:0 , img_loaded:false } } ,
+	data : function () { return { cropped:{} , url:'' , w:0 , h:0 , img_loaded:false , show_numbers:true } } ,
 	components : { i18n } ,
 	created : function () { this.init() } ,
 	methods : {
