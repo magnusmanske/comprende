@@ -1,7 +1,7 @@
 <template>
 <div class="form-group row">
 <label class="col-2 col-form-label">
-<div><i18n k='answer'/></div>
+<div><i18n k='answer'></i18n> <span v-if='typeof answer.num!="undefined"'>{{answer.num}}</span></div>
 <button class='btn btn-sm btn-outline-danger' @click.prevent='deleteAnswer'><i18n k='delete answer'/></button>
 </label>
 <div class="col-10">

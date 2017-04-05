@@ -6,7 +6,7 @@
 </div>
 <div v-else><i><i18n k='loading'/></i></div>
 <div :style='{width:w+"px","max-height":h+"px"}' class='image_with_labels_container'>
-<img @load='imageLoaded' class='card-img-bottom image_with_labels' :src='url' />
+<img @load='imageLoaded' @click.prevent='imageClick' class='card-img-bottom image_with_labels' :src='url' />
 </div>
 </div>
 </template>
@@ -38,6 +38,24 @@ export default {
 		} ,
 		getContainer : function () {
 			return $($(this.$el).get(0)) ;
+		} ,
+		imageClick : function ( ev ) {
+			var p = { x:ev.offsetX , y:ev.offsetY } ;
+			p = this.real2virtual ( p ) ;
+			this.$emit ( 'image_clicked' , p ) ;
+		} ,
+		real2virtual : function ( p ) {
+			var me = this ;
+			var img = me.getImg() ;
+			var vimg = {
+				w:me.iw*(10000+me.cropped.x1+10000-me.cropped.x2)/10000 ,
+				h:me.ih*(10000+me.cropped.y1+10000-me.cropped.y2)/10000
+			} ;
+			var ret = {
+				x : (p.x + me.iw*me.cropped.x1/10000)*10000/vimg.w ,
+				y : (p.y + me.iw*me.cropped.y1/10000)*10000/vimg.h
+			} ;
+			return ret ;
 		} ,
 		virtual2real : function ( p ) {
 			var me = this ;
