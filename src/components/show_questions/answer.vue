@@ -1,8 +1,11 @@
 <template>
-<div class='answer'>
+<div :class='getClasses()'>
 
 <div class='click' @click.prevent='onClick'>
-	<div style='display:inline-block;width:20pt;text-align:center;'><span v-if='state.selected' class='answer_cb' :class='checkmarkClass'>&#10003;</span></div>
+	<div style='display:inline-block;width:20pt;text-align:center;'>
+		<span v-if='state.checkable && state.selected' class='answer_cb' :class='checkmarkClass'>&#10003;</span>
+		<span v-if='(state.check_text||"")!=""' :class='checkmarkClass'>{{state.check_text}}</span>
+	</div>
 	<div style='display:inline-block;'>
 		<span v-if='type==wdid.p_text_answer'>{{label.text}}</span>
 		<span v-else-if='type==wdid.p_wd_answer'>{{label.text}}</span>
@@ -37,6 +40,12 @@ export default {
 		}
 	} ,
 	methods : {
+		getClasses : function () {
+			return {
+				answer:true ,
+				answer_with_focus:this.state.has_focus ,
+			} ;
+		} ,
 		init : function () {
 			var me = this ;
 			var i = me.getItem ( me.state.q ) ;
@@ -52,7 +61,9 @@ export default {
 			}
 		} ,
 		onClick : function () {
-			this.state.selected = !this.state.selected ;
+			if ( this.state.checkable ) this.state.selected = !this.state.selected ;
+			if ( this.state.single_focus ) this.state.has_focus = !this.state.has_focus ;
+			this.$emit('answer_clicked',this.state) ;
 		}
 	} ,
 	watch : {
@@ -99,5 +110,9 @@ div.answer > div.click {
 	cursor:pointer;
 	user-select:none;
 	vertical-align:top;
+}
+div.answer_with_focus {
+	border:5px solid #2F74D0;
+	border-radius:10px;
 }
 </style>

@@ -4,25 +4,21 @@
 
 <h4 class="card-title">
 <div v-if='!thumbnail' style='float:right;margin:5px;font-size:8pt;'>[<a :href='"/comprende/index.php?title=Item:"+q' title='See/edit the data item for this question' target='_blank'>{{q}}</a>]</div>
-{{i.getLabel()[0]}}
+{{title}}
 </h4>
-<h6 class="card-subtitle mb-2 text-muted">{{i.getDescription()[0]}}</h6>
+<h6 class="card-subtitle mb-2 text-muted">{{subtitle}}</h6>
 <question-intro :q='q'></question-intro>
 
 <div v-if='image!=""' style='display:table-row'>
-<div style='display:table-cell;width:66%;vertical-align:top;border:1px solid black;'>
-<image-with-labels :image='image' :width='width' :height='width' :crop='crop' :answers='answers' v-on:answer-clicked='answerClicked'></image-with-labels>
+<div class='qli_image_container'>
+<image-with-labels :image='image' :width='width' :height='width' :crop='crop' :answers='answers' v-on:answer-clicked='onNumberClicked'></image-with-labels>
 </div>
-<div style='disaply:teble-cell;width:33%;vertical-align:top;'>
-Blah
+<div class='qli_answers_container'>
+	<answer v-for='(state,num) in answers' :key='num' :state='state' :check_choice='options.show_choices' v-on:answer_clicked='onAnswerClicked'></answer>
 </div>
 </div>
 
-<!--
-<answer v-for='(state,num) in answers' :key='num' :state='state' :check_choice='options.show_choices'></answer>
--->
 <div style='text-align:center;border-top:1px solid #EEE;' :class='numberSelectedClass'><i18n k='answers required selected' :params='[num_required,num_selected]'/></div>
-
 </div>
 </div>
 </template>
@@ -35,34 +31,34 @@ import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
 import QuestionIntro from './question-intro.vue'
 import i18n from '../i18n.vue'
 import ImageWithLabels from './image-with-labels.vue'
+import answer from './answer.vue'
+import QuestionMixin from '../../mixins/QuestionMixin.vue'
 
 export default {
-	mixins : [ wikibaseAPImixin ] ,
+	mixins : [ wikibaseAPImixin , QuestionMixin ] ,
 	props: [ 'q' , 'options' , 'thumbnail' ] ,
-	data : function () { return { i:{} , answers:[] , loaded:false , num_selected:0 , num_required:0 , has_been_answered:false , image:'' , width:600 , crop:'' , user } } ,
+	data : function () { return { i:{} , answers:[] , loaded:false , num_selected:0 , num_required:0 , has_been_answered:false , image:'' , width:600 , crop:'' , user , chosen_answer:undefined , chosen_number:undefined } } ,
 	created : function () { this.loadQuestion () } ,
-	components : { 'question-intro':QuestionIntro , i18n , 'image-with-labels':ImageWithLabels } ,
+	components : { 'question-intro':QuestionIntro , i18n , 'image-with-labels':ImageWithLabels , answer } ,
 	methods : {
-		shuffle : function (array) {
-		  var currentIndex = array.length, temporaryValue, randomIndex;
-
-		  // While there remain elements to shuffle...
-		  while (0 !== currentIndex) {
-
-			// Pick a remaining element...
-			randomIndex = Math.floor(Math.random() * currentIndex);
-			currentIndex -= 1;
-
-			// And swap it with the current element.
-			temporaryValue = array[currentIndex];
-			array[currentIndex] = array[randomIndex];
-			array[randomIndex] = temporaryValue;
-		  }
-
-		  return array;
+		getAnswerLabel : function ( answer_id ) {
+			var me = this ;
+			var answer = me.answers[answer_id] ;
+			var s = me.i.getStatementByID ( answer.sid ) ;
+			if ( s.mainsnak.property == wdid.p_text_answer ) {
+				return s.mainsnak.datavalue.value.text ;
+			} else if ( s.mainsnak.property == wdid.p_wd_answer ) {
+				var ai = me.getItemSite ( wikidata_site , s.mainsnak.datavalue.value ) ;
+				return ai.getLabel()[0] ;
+			} else {
+				return "Can't identify answer property " + s.mainsnak.property ;
+			}
+			console.log ( s ) ;
 		} ,
-		answerClicked : function ( answer_id ) {
-			
+		onNumberClicked : function ( answer_id ) {
+			var me = this ;
+			me.chosen_number = answer_id ;
+			me.matchNumberAnswer() ;
 		} ,
 		setupImage : function () {
 			var me = this ;
@@ -82,18 +78,24 @@ export default {
 			me.loaded = false ;
 			me.answers = [] ;
 			me.i = me.getItem ( me.q ) ;
+			me.setTitle() ;
 			if ( !me.setupImage () ) {
 				console.log ( 'ERROR no image' , me.i ) ;
 				return ;
 			}
 			var wd_answers = me.i.getStringValues ( wdid.p_wd_answer ) ;
+			
+			function getNewAnswer ( sid ) {
+				return {q:me.q,sid:sid,selected:false,fraction:0,single_focus:true,has_focus:false,num:0,check_text:''} ;
+			}
 
 			function fin () {
 				var answers = [] ;
-				$.each ( (me.i.json.claims[wdid.p_text_answer]||[]) , function ( k , v ) { answers.push ( {q:me.q,sid:v.id,selected:false,fraction:0} ) } ) ;
-				$.each ( (me.i.json.claims[wdid.p_wd_answer]||[]) , function ( k , v ) { answers.push ( {q:me.q,sid:v.id,selected:false,fraction:0} ) } ) ;
+				$.each ( (me.i.json.claims[wdid.p_text_answer]||[]) , function ( k , v ) { answers.push ( getNewAnswer(v.id) ) } ) ;
+				$.each ( (me.i.json.claims[wdid.p_wd_answer]||[]) , function ( k , v ) { answers.push ( getNewAnswer(v.id) ) } ) ;
 			
 				me.num_required = 0 ;
+				var nums = [] ;
 				$.each ( answers , function ( dummy , answer ) {
 //					answer.thumbnail = me.thumbnail ;//??
 					var s = me.i.getStatementByID ( answer.sid ) ;
@@ -117,15 +119,42 @@ export default {
 						} ) ;
 					}
 					
+					nums.push ( dummy+1 ) ;
 				} ) ;
-			
+				
+				nums = me.shuffle ( nums ) ;
 				me.answers = me.shuffle ( answers ) ;
+				$.each ( me.answers , function ( k , v ) {
+					v.num = nums.pop() ;
+				} ) ;
 				me.loaded = true ;
 			}
 			
 			if ( wd_answers.length > 0 ) me.loadItemsSite ( wikidata_site , wd_answers , fin ) ;
 			else fin() ;
-		}
+		} ,
+		onAnswerClicked : function ( answer ) {
+			var me = this ;
+			me.chosen_answer = undefined ;
+			$.each ( me.answers , function ( k , v ) {
+				if ( v.num == answer.num ) {
+					me.chosen_answer = answer.has_focus ? k : undefined ;
+				} else {
+					v.has_focus = false ;
+				}
+			} ) ;
+			me.matchNumberAnswer() ;
+		} ,
+		matchNumberAnswer : function () {
+			var me = this ;
+			if ( typeof me.chosen_answer == 'undefined' ) return ;
+			if ( typeof me.chosen_number == 'undefined' ) return ;
+			me.answers[me.chosen_answer].check_text = me.answers[me.chosen_number].num ;
+			me.answers[me.chosen_answer].selected = true ;
+			me.answers[me.chosen_answer].has_focus = false ;
+			me.chosen_answer = undefined ;
+			me.chosen_number = undefined ;
+		} ,
 	} ,
 	computed : {
 		numberSelectedClass : function () {
@@ -156,10 +185,25 @@ export default {
 				}
 			} ,
 			deep : true
-		}
+		} ,
+		'user.settings' : { handler : function () { this.setTitle() } , deep : true } ,
 	}
 }
 </script>
 
 <style>
+div.qli_image_container {
+	display:table-cell;
+	width:66%;
+	vertical-align:top;
+}
+div.qli_answers_container {
+	display:table-cell;
+	width:33%;
+	max-width:33%;
+	vertical-align:top;
+	margin-left:5px;
+	overflow:auto;
+	zoom:0.8;
+}
 </style>

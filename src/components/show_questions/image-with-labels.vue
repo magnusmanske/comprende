@@ -1,7 +1,7 @@
 <template>
 <div style='position:relative;'>
 <div v-if='img_loaded' style='height:0px;position:relative;'>
-	<div v-for='(answer,num) in answers' :style='getAnswerStyle(answer)' class='image_with_labels_answer' @click.prevent='$emit("answer-clicked",num)'>{{num+1}}</div>
+	<div v-for='(answer,answer_id) in answers' :style='getAnswerStyle(answer)' class='image_with_labels_answer' @click.prevent='$emit("answer-clicked",answer_id)'>{{answer.num}}</div>
 </div>
 <div :style='{width:w+"px","max-height":h+"px"}' class='image_with_labels_container'>
 <img @load='imageLoaded' class='card-img-bottom image_with_labels' :src='url'>
@@ -51,6 +51,8 @@ export default {
 		getAnswerStyle : function ( answer ) {
 			var me = this ;
 			var p = me.virtual2real ( answer.position ) ;
+			p.x -= 10 ;
+			p.y -= 10 ;
 			return { left:p.x+'px' , top:p.y+'px' } ;
 		} ,
 		imageLoaded : function () {
@@ -87,11 +89,19 @@ div.image_with_labels_answer {
 	position:absolute;
 	z-index:5;
 	font-size:10pt;
+	font-family:sans-serif;
+	font-weight:bold;
 	cursor:pointer;
 	border:1px solid black;
 	border-radius:100px;
 	background-color:white;
-	opacity:0.6;
-	box-shadow:3px 3px 3px black;
+	opacity:0.5;
+	box-shadow:3px 3px 2px black;
+	width:20px;
+	text-align:center;
+}
+div.image_with_labels_answer:hover {
+	opacity:1;
+	box-shadow:3px 3px 2px #333;
 }
 </style>

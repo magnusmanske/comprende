@@ -4,9 +4,9 @@
 
 <h4 class="card-title">
 <div v-if='!thumbnail' style='float:right;margin:5px;font-size:8pt;'>[<a :href='"/comprende/index.php?title=Item:"+q' title='See/edit the data item for this question' target='_blank'>{{q}}</a>]</div>
-{{i.getLabel()[0]}}
+{{title}}
 </h4>
-<h6 class="card-subtitle mb-2 text-muted">{{i.getDescription()[0]}}</h6>
+<h6 class="card-subtitle mb-2 text-muted">{{subtitle}}</h6>
 <question-intro :q='q'></question-intro>
 <answer v-for='(state,num) in answers' :key='num' :state='state' :check_choice='options.show_choices'></answer>
 <div style='text-align:center;border-top:1px solid #EEE;' :class='numberSelectedClass'><i18n k='answers required selected' :params='[num_required,num_selected]'/></div>
@@ -23,32 +23,15 @@ import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
 import QuestionIntro from './question-intro.vue'
 import answer from './answer.vue'
 import i18n from '../i18n.vue'
+import QuestionMixin from '../../mixins/QuestionMixin.vue'
 
 export default {
-	mixins : [ wikibaseAPImixin ] ,
+	mixins : [ wikibaseAPImixin , QuestionMixin ] ,
 	props: [ 'q' , 'options' , 'thumbnail' ] ,
 	data : function () { return { i:{} , answers:[] , loaded:false , num_selected:0 , num_required:0 , has_been_answered:false , user } } ,
 	created : function () { this.loadQuestion () } ,
 	components : { 'question-intro':QuestionIntro , answer , i18n } ,
 	methods : {
-		shuffle : function (array) {
-		  var currentIndex = array.length, temporaryValue, randomIndex;
-
-		  // While there remain elements to shuffle...
-		  while (0 !== currentIndex) {
-
-			// Pick a remaining element...
-			randomIndex = Math.floor(Math.random() * currentIndex);
-			currentIndex -= 1;
-
-			// And swap it with the current element.
-			temporaryValue = array[currentIndex];
-			array[currentIndex] = array[randomIndex];
-			array[randomIndex] = temporaryValue;
-		  }
-
-		  return array;
-		} ,
 		loadQuestion : function () {
 			var me = this ;
 			me.has_been_answered = false ;
@@ -56,12 +39,13 @@ export default {
 			me.loaded = false ;
 			me.answers = [] ;
 			me.i = me.getItem ( me.q ) ;
+			me.setTitle() ;
 			var wd_answers = me.i.getStringValues ( wdid.p_wd_answer ) ;
 			
 			function fin () {
 				var answers = [] ;
-				$.each ( (me.i.json.claims[wdid.p_text_answer]||[]) , function ( k , v ) { answers.push ( {q:me.q,sid:v.id,selected:false,fraction:0} ) } ) ;
-				$.each ( (me.i.json.claims[wdid.p_wd_answer]||[]) , function ( k , v ) { answers.push ( {q:me.q,sid:v.id,selected:false,fraction:0} ) } ) ;
+				$.each ( (me.i.json.claims[wdid.p_text_answer]||[]) , function ( k , v ) { answers.push ( {q:me.q,sid:v.id,selected:false,fraction:0,checkable:true} ) } ) ;
+				$.each ( (me.i.json.claims[wdid.p_wd_answer]||[]) , function ( k , v ) { answers.push ( {q:me.q,sid:v.id,selected:false,fraction:0,checkable:true} ) } ) ;
 			
 				me.num_required = 0 ;
 				$.each ( answers , function ( dummy , answer ) {
@@ -120,7 +104,8 @@ export default {
 				}
 			} ,
 			deep : true
-		}
+		} ,
+		'user.settings' : { handler : function () { this.setTitle() } , deep : true } ,
 	}
 }
 </script>
