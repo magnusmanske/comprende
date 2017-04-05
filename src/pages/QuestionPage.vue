@@ -1,7 +1,7 @@
 <template>
 <div>
 <nav-header></nav-header>
-<question :q='q'></question>
+<question :q='q' auto_show_choices='1'></question>
 </div>
 </template>
 

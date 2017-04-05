@@ -32,9 +32,19 @@ export default {
 	created : function () { this.init () } ,
 	computed : {
 		checkmarkClass : function () {
-			if ( this.check_choice ) {
-				if ( this.state.fraction > 0 ) return { answer_cb_ok:true } ;
-				return { answer_cb_nope:true } ;
+			var me = this ;
+			if ( me.check_choice ) {
+				if ( me.state.checkable ) {
+					if ( me.state.fraction > 0 ) return { answer_cb_ok:true } ;
+					return { answer_cb_nope:true } ;
+				} else {
+					if ( (me.state.check_text||'') != '' ) {
+						return {
+							answer_cb_ok : (me.state.check_text==me.state.num) ,
+							answer_cb_nope : (me.state.check_text!=me.state.num) ,
+						}
+					}
+				}
 			}
 			return { answer_cb_default:true }
 		}

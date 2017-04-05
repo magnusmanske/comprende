@@ -189,7 +189,7 @@ export default {
 				var sum = 0 ;
 				$.each ( me.answers , function ( k , v ) {
 					cnt += v.selected ? 1 : 0 ;
-					if ( v.selected ) sum += v.fraction*1 ;
+					if ( v.selected ) sum += 1 ;
 				} ) ;
 				me.num_selected = cnt ;
 				if ( me.num_required>0 && me.num_required==me.num_selected ) {
