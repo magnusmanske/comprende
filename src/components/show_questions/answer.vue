@@ -112,7 +112,7 @@ div.answer > div.click {
 	vertical-align:top;
 }
 div.answer_with_focus {
-	border:5px solid #2F74D0;
+	border:3px solid #2F74D0;
 	border-radius:10px;
 }
 </style>

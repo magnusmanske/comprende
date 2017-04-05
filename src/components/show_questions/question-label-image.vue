@@ -41,25 +41,6 @@ export default {
 	created : function () { this.loadQuestion () } ,
 	components : { 'question-intro':QuestionIntro , i18n , 'image-with-labels':ImageWithLabels , answer } ,
 	methods : {
-		getAnswerLabel : function ( answer_id ) {
-			var me = this ;
-			var answer = me.answers[answer_id] ;
-			var s = me.i.getStatementByID ( answer.sid ) ;
-			if ( s.mainsnak.property == wdid.p_text_answer ) {
-				return s.mainsnak.datavalue.value.text ;
-			} else if ( s.mainsnak.property == wdid.p_wd_answer ) {
-				var ai = me.getItemSite ( wikidata_site , s.mainsnak.datavalue.value ) ;
-				return ai.getLabel()[0] ;
-			} else {
-				return "Can't identify answer property " + s.mainsnak.property ;
-			}
-			console.log ( s ) ;
-		} ,
-		onNumberClicked : function ( answer_id ) {
-			var me = this ;
-			me.chosen_number = answer_id ;
-			me.matchNumberAnswer() ;
-		} ,
 		setupImage : function () {
 			var me = this ;
 			var images = me.i.getStringValues ( wdid.p_image ) ;
@@ -86,7 +67,7 @@ export default {
 			var wd_answers = me.i.getStringValues ( wdid.p_wd_answer ) ;
 			
 			function getNewAnswer ( sid ) {
-				return {q:me.q,sid:sid,selected:false,fraction:0,single_focus:true,has_focus:false,num:0,check_text:''} ;
+				return {q:me.q,sid:sid,selected:false,fraction:0,single_focus:true,has_focus:false,num:0,check_text:'',number_focus:false} ;
 			}
 
 			function fin () {
@@ -133,6 +114,19 @@ export default {
 			if ( wd_answers.length > 0 ) me.loadItemsSite ( wikidata_site , wd_answers , fin ) ;
 			else fin() ;
 		} ,
+		onNumberClicked : function ( answer_id ) {
+			var me = this ;
+			if ( me.answers[answer_id].number_focus ) {
+				me.answers[answer_id].number_focus = false ;
+				return ;
+			}
+			$.each ( me.answers , function ( k , v ) {
+				v.number_focus = false ;
+			} ) ;
+			me.answers[answer_id].number_focus = true ;
+			me.chosen_number = answer_id ;
+			me.matchNumberAnswer() ;
+		} ,
 		onAnswerClicked : function ( answer ) {
 			var me = this ;
 			me.chosen_answer = undefined ;
@@ -149,9 +143,15 @@ export default {
 			var me = this ;
 			if ( typeof me.chosen_answer == 'undefined' ) return ;
 			if ( typeof me.chosen_number == 'undefined' ) return ;
+			$.each ( me.answers , function ( k , v ) {
+				if ( v.check_text != me.answers[me.chosen_number].num ) return ;
+				v.check_text = '' ;
+				v.selected = false ;
+			} ) ;
 			me.answers[me.chosen_answer].check_text = me.answers[me.chosen_number].num ;
 			me.answers[me.chosen_answer].selected = true ;
 			me.answers[me.chosen_answer].has_focus = false ;
+			me.answers[me.chosen_number].number_focus = false ;
 			me.chosen_answer = undefined ;
 			me.chosen_number = undefined ;
 		} ,

@@ -53,7 +53,12 @@ export default {
 			var p = me.virtual2real ( answer.position ) ;
 			p.x -= 10 ;
 			p.y -= 10 ;
-			return { left:p.x+'px' , top:p.y+'px' } ;
+			var ret = { left:p.x+'px' , top:p.y+'px' } ;
+			if ( answer.number_focus ) {
+				ret.border = '2px solid #2F74D0' ;
+				ret.opacity = 1 ;
+			}
+			return ret ;
 		} ,
 		imageLoaded : function () {
 			var me = this ;
