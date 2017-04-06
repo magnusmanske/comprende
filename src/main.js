@@ -22,6 +22,7 @@ const routes = [
   { path: '/quiz/:q', component: QuizPage , props:true } ,
   { path: '/new/questions', component: NewQuestions } ,
   { path: '/import/moodle_xml', component: ImportMoodleXML } ,
+  { path: '/design/quiz', component: DesignQuiz } ,
   { path: '/design/quiz/:q', component: DesignQuiz , props:true } ,
 ] ;
 

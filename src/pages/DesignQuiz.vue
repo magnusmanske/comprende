@@ -4,31 +4,33 @@
 
 <div v-if='loaded' class="card">
 	<div class="card-block">
-
 		<h1 class="card-title">
 			<div style='float:right;font-size:10pt;'>[<a :href='"./index.php?title=Item:"+q' target='_blank'>{{q}}</a>]</div>
 			<i18n k='quiz'/>
 		</h1>
+	</div>
 
+	<div class="card-block">
+<!--		<h3><i18n k='quiz details'/></h3>-->
+		<string-edit label='Label' placeholder='A name for the quiz' :value='quiz_label' v-on:enter='saveChanges'></string-edit>
+		<string-edit label='Description' placeholder='A description for the question' :value='quiz_desc' v-on:enter='saveChanges'></string-edit>
+	</div>
 
-
+	<div class="card-block">
 		<div style='margin-bottom:5px;'>
 			<router-link v-if='!wasChanged()' class='btn btn-outline-primary' :to='"/quiz/"+q'><i18n k='play quiz'/></router-link>
-			<router-link target='_blank' class='btn btn-outline-success' to='/new/questions'><i18n k='create new questions'/></router-link>
-			<button class='btn btn-outline-danger' @click.prevent='removeCurrentQuestion'><i18n k='remove question from quiz'/></button>
-			<span v-if='wasChanged()'><button class='btn btn-primary' @click.prevent='saveChanges'><i18n k='save changes'/></button></span>
+			<span v-if='user.settings.can_edit'>
+				<router-link target='_blank' class='btn btn-outline-success' to='/new/questions'><i18n k='create new questions'/></router-link>
+				<button class='btn btn-outline-danger' @click.prevent='removeCurrentQuestion'><i18n k='remove question from quiz'/></button>
+				<span v-if='wasChanged()'><button class='btn btn-primary' @click.prevent='saveChanges'><i18n k='save changes'/></button></span>
+			</span>
+			<span v-else><i18n k='you need to log in to edit'/></span>
 		</div>
 		<div>
 			<wikibase-predictive-type style='display:inline;' placeholder_key='search for questions' v-on:set_item='setItemFromPredictive' nofocus='1' :site='wikibase_default_site' type='item'></wikibase-predictive-type>
 			<button v-if='item2add!=""' class='btn btn-outline-success' @click.prevent='addQuestion'><i18n k='add question to quiz'/></button>
 		</div>
-
 		<p><i18n k='total points in quiz' :params='[progress.total_points]'></i18n> <i18n k='total questions in quiz' :params='[progress.total]'></i18n></p>
-
-	</div>
-
-	<div class="card-block">
-		<h3><i18n k='quiz details'/></h3>
 	</div>
 
 	<div class="card-block">
@@ -49,7 +51,13 @@
 	</div>
 </div>
 
-<div v-else><i18n k='loading'/></div>
+<div v-else-if='typeof q=="undefined"'>
+	<span v-if='user.settings.can_edit'>
+		<button class='btn btn-outline-primary' @click.prevent='createNewQuiz'><i18n k='create new quiz'/></button>
+	</span>
+	<span v-else><i18n k='you need to log in to edit'/></span>
+</div>
+<div v-else><i><i18n k='loading'/></i></div>
 
 </div>
 </template>
@@ -61,19 +69,18 @@ import NavHeader from '../components/nav-header.vue'
 import question from '../components/show_questions/question.vue'
 import quiz_mixin from '../mixins/quiz.vue'
 import predictive from '../components/wikibase-predictive-type.vue'
+import wikibaseAPImixin from '../mixins/wikibaseAPImixin.js'
+import StringEdit from '../components/string-edit.vue'
 
 export default {
 	props : [ 'q' ] ,
-	components : { question , i18n , 'nav-header':NavHeader , 'wikibase-predictive-type':predictive } ,
-	data : function () { return { actions:[] , item2add:'' , wikibase_default_site } } ,
-	mixins : [ quiz_mixin , i18n ] ,
-	created : function () {
-		var me = this ;
-		me.actions = [] ;
-		this.loadQuiz () ;
-	} ,
+	components : { 'string-edit':StringEdit , question , i18n , 'nav-header':NavHeader , 'wikibase-predictive-type':predictive } ,
+	data : function () { return { actions:[] , item2add:'' , wikibase_default_site , quiz_label:{} , quiz_desc:{} } } ,
+	mixins : [ quiz_mixin , i18n , wikibaseAPImixin ] ,
+	created : function () { this.init() } ,
 	updated : function () {
 		var me = this ;
+		if ( typeof me.q == 'undefined' ) return ;
 		var container = $(me.$el).find('div.design_quiz_question_container') ;
 		var c2 = container.get(0) ;
 		if ( typeof c2 != 'undefined' ) {
@@ -86,6 +93,39 @@ export default {
 		}
 	} ,
 	methods : {
+		init : function () {
+			var me = this ;
+			me.actions = [] ;
+			if ( typeof me.q == 'undefined' ) return ;
+			this.loadQuiz ( function () {
+				me.quiz_label = { text:me.quiz_item.getLabel()[0] } ;
+				me.quiz_desc = { text:me.quiz_item.getDescription()[0] } ;
+			} ) ;
+		} ,
+		createNewQuiz : function () {
+			var me = this ;
+			var data = {
+				claims : [
+					me.newClaimItem ( { property:wdid.p_type , id:wdid.q_quiz } )
+				]
+			} ;
+			var data_json = JSON.stringify(data) ;
+			me.getToken ( function ( token ) {
+				$.post ( wikibase_default_site.api , {
+					action:'wbeditentity',
+					'new':'item',
+					token:token,
+					data:data_json,
+					format:'json'
+				} , function ( d ) {
+					if ( d.success == 1 ) {
+						me.$router.push ( '/design/quiz/'+d.entity.id ) ;
+					} else {
+						console.log ( "Error creating item" , d ) ;
+					}
+				} , 'json' ) ;
+			} ) ;
+		} ,
 		changePoints : function ( qid ) {
 			var me = this ;
 			var question = me.getQuestion(qid) ;
@@ -109,7 +149,7 @@ export default {
 				// Sanity check
 				var i = me.getItem ( me.item2add ) ;
 				var types = i.getItemValues ( wdid.p_type ) ;
-				console.log ( types ) ;
+//				console.log ( types ) ;
 				if ( types.length == 0 || -1 == $.inArray ( types[0] , wdid.q_questions ) ) {
 					alert ( 'Sorry, that is not a question item' ) ;
 					return ;
@@ -128,6 +168,8 @@ export default {
 			var me = this ;
 			if ( me.sort_order.join() != me.original_sort_order ) return true ;
 			if ( me.actions.length > 0 ) return true ;
+			if ( me.quiz_label.text != me.quiz_item.getLabel()[0] ) return true ;
+			if ( me.quiz_desc.text != me.quiz_item.getDescription()[0] ) return true ;
 			return false ;
 		} ,
 		removeCurrentQuestion : function () {
@@ -141,6 +183,32 @@ export default {
 		saveChanges : function () {
 			var me = this ;
 			me.loaded = false ;
+
+			if ( me.quiz_label.text != me.quiz_item.getLabel()[0] ) {
+				var lang = me.quiz_item.getLabel()[1] ;
+				var labels = {} ;
+				labels[lang] = { language:lang , value:me.quiz_label.text } ;
+				var params = {
+					action:'wbeditentity',
+					id:me.q ,
+					data:JSON.stringify({labels}) ,
+				} ;
+				me.quiz_label.text = me.quiz_item.getLabel()[0] ; // Hack for next run!
+				return me.runWikibaseEdit ( params , function ( d ) { me.saveChanges() } ) ;
+			}
+			
+			if ( me.quiz_desc.text != me.quiz_item.getDescription()[0] ) {
+				var lang = me.quiz_item.getDescription()[1] ;
+				var descriptions = {} ;
+				descriptions[lang] = { language:lang , value:me.quiz_desc.text } ;
+				var params = {
+					action:'wbeditentity',
+					id:me.q ,
+					data:JSON.stringify({descriptions}) ,
+				} ;
+				me.quiz_desc.text = me.quiz_item.getDescription()[0] ; // Hack for next run!
+				return me.runWikibaseEdit ( params , function ( d ) { me.saveChanges() } ) ;
+			}
 			
 			// Do actions first
 			if ( me.actions.length > 0 ) {
@@ -191,10 +259,12 @@ export default {
 			}
 			
 			function finish () {
-				me.actions = [] ;
-				me.item2add = '' ;
 				me.reloadItems ( [ me.q ] , function () {
-					me.loadQuiz() ;
+					me.init() ;
+/*					me.loadQuiz ( function () {
+						me.quiz_label = { text:me.quiz_item.getLabel()[0] } ;
+						me.quiz_desc = { text:me.quiz_item.getDescription()[0] } ;
+					} ) ;*/
 				} ) ;
 			}
 
@@ -237,6 +307,9 @@ export default {
 				finish() ;
 			}
 		} ,
+	} ,
+	watch: {
+		'$route' (to, from) { this.init() } ,
 	} ,
 }
 </script>

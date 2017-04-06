@@ -1,7 +1,7 @@
 <template>
 <div class="form-group row"  :class='getClasses'>
 <label class="col-2 col-form-label"><i18n :k='i18n_key'/></label>
-<div v-if='typeof type=="undefined"' class="col-10"><input class="form-control" type="text" v-model='value.text' :placeholder='the_placeholder' /></div>
+<div v-if='typeof type=="undefined"' class="col-10"><input class="form-control" type="text" v-model='value.text' :placeholder='the_placeholder' @keyup.enter='$emit("enter")' /></div>
 <!--<div v-if='type=="fraction"' class="col-10" :class='getClasses'><input class="form-control" type="number" min="0" max="100" v-model='value' /></div>-->
 <!--<div>{{type}}</div>-->
 </div>
@@ -30,7 +30,7 @@ export default {
 			if ( me.noempty && me.value.text.length == 0 ) ret['has-danger'] = true ;
 			return ret ;
 		}
-	}
+	} ,
 }
 </script>
 

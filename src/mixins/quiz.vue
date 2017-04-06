@@ -6,7 +6,7 @@ import wikibaseAPImixin from '../mixins/wikibaseAPImixin.js'
 import { wdid } from '../config.js'
 
 export default {
-	data : function () { return { questions:[] , loaded:false , progress:{} , wdid , current_question:0 , not_a_quiz:false , sort_order:[] , original_sort_order:'' , max_question_id:0 } } ,
+	data : function () { return { questions:[] , loaded:false , progress:{} , wdid , current_question:0 , not_a_quiz:false , sort_order:[] , original_sort_order:'' , max_question_id:0 , quiz_item:{} } } ,
 	mixins : [ wikibaseAPImixin ] ,
 	computed : {
 		getCurrentQuestionQ : function () {
@@ -105,6 +105,7 @@ export default {
 			var me = this ;
 			me.loaded = false ;
 			me.loadItems ( [ me.q ] , function () {
+				me.quiz_item = me.getItem ( me.q ) ;
 				me.loadQuestions ( function () {
 					if ( typeof callback != 'undefined' ) callback() ;
 					me.loaded = true ;
