@@ -181,7 +181,7 @@ export default {
 					var qualifiers = {} ;
 					qualifiers[wdid.p_crop] = [ me.newClaimString ( {
 						property : wdid.p_crop ,
-						value : (question.crop[0]*100)+','+(question.crop[1]*100)+','+(question.crop[2]*100)+','+(question.crop[3]*100)
+						value : parseInt(question.crop[0]*100)+','+parseInt(question.crop[1]*100)+','+parseInt(question.crop[2]*100)+','+parseInt(question.crop[3]*100)
 					} ) . mainsnak ] ;
 					item.claims.push ( me.newClaimString ( {
 						property : wdid.p_image ,

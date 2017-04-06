@@ -7,7 +7,9 @@
 </div>
 <div v-else><i><i18n k='loading'/></i></div>
 <div :style='{width:w+"px","max-height":h+"px"}' class='image_with_labels_container'>
-<img @load='imageLoaded' @click.prevent='imageClick' class='card-img-bottom image_with_labels' :src='url' />
+	<div :style='{overflow:"hidden","max-width":ic.w,"max-height":ic.h}'>
+		<img @load='imageLoaded' @click.prevent='imageClick' class='card-img-bottom image_with_labels' :src='url' />
+	</div>
 </div>
 </div>
 </template>
@@ -18,10 +20,17 @@ import i18n from '../i18n.vue'
 
 export default {
 	props : [ 'image' , 'crop' , 'width' , 'height' , 'answers' , 'editing' ] ,
-	data : function () { return { cropped:{} , url:'' , w:0 , h:0 , img_loaded:false , show_numbers:true } } ,
+	data : function () { return { cropped:{} , url:'' , w:0 , h:0 , img_loaded:false , show_numbers:true , ic:{w:'',h:''} } } ,
 	components : { i18n } ,
 	created : function () { this.init() } ,
 	methods : {
+		setImageCropperStyle : function () {
+			var me = this ;
+			var max = me.virtual2real ( { x:me.cropped.x2-me.cropped.x1 , y:me.cropped.y2-me.cropped.y1 } ) ;
+			me.ic.w = (max.x||'') ;
+			me.ic.h = (max.y||'') ;
+			// This does not work yet...
+		} ,
 		init : function () {
 			var me = this ;
 			me.w = (me.width||600) ;
@@ -29,6 +38,8 @@ export default {
 			me.img_loaded = false ;
 			me.iw = 0 ;
 			me.ih = 0 ;
+			me.ic.w = '' ;
+			me.ic.h = '' ;
 			me.cropped = {x1:0,y1:0,x2:10000,y2:10000} ;
 			var crop_parts = (me.crop||'').split(',') ;
 			if ( crop_parts.length == 4 ) me.cropped = {x1:crop_parts[0]*1,y1:crop_parts[1]*1,x2:crop_parts[2]*1,y2:crop_parts[3]*1} ;
@@ -98,6 +109,8 @@ export default {
 			img.css ( { top:tl.y+'px' , left:tl.x+'px' } ) ;
 			img.width ( (br.x-tl.x)+'px' ) ;
 			img.height ( (br.y-tl.y)+'px' ) ;
+
+			me.setImageCropperStyle() ;
 			
 			me.img_loaded = true ;
 		} ,
