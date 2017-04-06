@@ -18,7 +18,9 @@
 </div>
 </div>
 
-<div style='text-align:center;border-top:1px solid #EEE;' :class='numberSelectedClass'><i18n k='answers required selected' :params='[num_required,num_selected]'/></div>
+<div style='text-align:center;border-top:1px solid #EEE;' :class='numberSelectedClass'>
+	<i18n k='answers required selected' :params='[num_required,num_selected]'/>
+</div>
 </div>
 </div>
 </template>
@@ -74,7 +76,7 @@ export default {
 			var wd_answers = me.i.getStringValues ( wdid.p_wd_answer ) ;
 			
 			function getNewAnswer ( sid ) {
-				return {q:me.q,sid:sid,selected:false,fraction:-1,single_focus:true,has_focus:false,num:0,check_text:'',number_focus:false} ;
+				return {q:me.q,sid:sid,selected:false,fraction:-1,single_focus:true,has_focus:false,num:0,check_text:'',number_focus:false,number_highlight:false} ;
 			}
 
 			function fin () {
@@ -162,6 +164,9 @@ export default {
 			if ( typeof me.chosen_answer == 'undefined' ) return ;
 			if ( typeof me.chosen_number == 'undefined' ) return ;
 			$.each ( me.answers , function ( k , v ) {
+				if ( me.answers[me.chosen_answer].check_text == v.num ) v.number_highlight = false ;
+			} ) ;
+			$.each ( me.answers , function ( k , v ) {
 				if ( v.check_text != me.answers[me.chosen_number].num ) return ;
 				v.check_text = '' ;
 				v.selected = false ;
@@ -170,6 +175,7 @@ export default {
 			me.answers[me.chosen_answer].selected = true ;
 			me.answers[me.chosen_answer].has_focus = false ;
 			me.answers[me.chosen_number].number_focus = false ;
+			me.answers[me.chosen_number].number_highlight = true ;
 			me.chosen_answer = undefined ;
 			me.chosen_number = undefined ;
 			if ( me.options.autocomplete_last_possible ) {

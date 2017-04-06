@@ -3,7 +3,7 @@
 <div v-if='img_loaded' style='height:0px;position:relative;'>
 	<div class='image_with_labels_answer image_with_labels_toggler' @click.prevent='show_numbers=!show_numbers'>{{show_numbers?'○':'●'}}</div>
 	<div v-if='editing' class='iwl_crop_helper'></div>
-	<div v-if='show_numbers' v-for='(answer,answer_id) in answers' :style='getAnswerStyle(answer)' class='image_with_labels_answer' @click.prevent='$emit("answer-clicked",answer_id)'>{{answer.num}}</div>
+	<div v-if='show_numbers' v-for='(answer,answer_id) in answers' :style='getAnswerStyle(answer)' class='image_with_labels_answer' :class='{iwla_matched:answer.number_highlight}' @click.prevent='$emit("answer-clicked",answer_id)'>{{answer.num}}</div>
 </div>
 <div v-else><i><i18n k='loading'/></i></div>
 <div :style='{width:w+"px","max-height":h+"px"}' class='image_with_labels_container'>
@@ -166,5 +166,9 @@ div.iwl_crop_helper {
 	z-index:3;
 	border:1px dotted red;
 	pointer-events: none;
+}
+div.iwla_matched {
+	background-color:#86BCFF;
+	opacity:1;
 }
 </style>
