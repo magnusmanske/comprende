@@ -116,6 +116,7 @@ export default {
 		} ,
 	} ,
 	watch : {
+		image : function () { this.init() } ,
 		crop : function () {
 			var me = this ;
 			if ( !me.editing ) return ;

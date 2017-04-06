@@ -116,6 +116,7 @@ export default {
 				} ) ;
 				
 				if ( no_fraction > 0 || sum_fraction == 0 ) {
+					if ( sum_fraction == 0 ) no_fraction = answers.length ;
 					var remaining_fraction = (100-sum_fraction) / no_fraction ;
 					$.each ( answers , function ( k , v ) {
 						if ( v.fraction == -1 || sum_fraction == 0 ) v.fraction = remaining_fraction ;
@@ -188,6 +189,7 @@ export default {
 				if ( unmatched.length == 1 ) {
 					var available_number ;
 					$.each ( me.answers , function ( k , v ) {
+						v.number_highlight = true ;
 						if ( typeof used_numbers[v.num] == 'undefined' ) available_number = v.num ;
 					} ) ;
 					me.answers[unmatched[0]].check_text = available_number ;
