@@ -16,14 +16,25 @@ export default {
 	mixins : [ wikibaseAPImixin ] ,
 	props : [ 'q' ] ,
 	components : { question:question , 'nav-header':NavHeader } ,
-	data : function () { return { type:'' , loading:true } } ,
+	data : function () { return {} } ,
 	created : function () {
 		question_bus.$on ( 'answered' , this.wasAnswered ) ;
+		this.init() ;
 	} ,
 	methods : {
+		init : function () {
+			var me = this ;
+			me.loading = true ;
+			me.loadItems ( [me.q] , function () {
+				var i = me.getItem ( me.q ) ;
+			} ) ;
+		} ,
 		wasAnswered : function ( success , fraction ) {
 			console.log ( success , fraction ) ;
 		} ,
+	} ,
+	watch : {
+		'$route' (n,o) { this.init() } ,
 	} ,
 }
 </script>

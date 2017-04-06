@@ -115,10 +115,10 @@ export default {
 					nums.push ( dummy+1 ) ;
 				} ) ;
 				
-				if ( no_fraction > 0 ) {
+				if ( no_fraction > 0 || sum_fraction == 0 ) {
 					var remaining_fraction = (100-sum_fraction) / no_fraction ;
 					$.each ( answers , function ( k , v ) {
-						if ( v.fraction == -1 ) v.fraction = remaining_fraction ;
+						if ( v.fraction == -1 || sum_fraction == 0 ) v.fraction = remaining_fraction ;
 					} ) ;
 				}
 				

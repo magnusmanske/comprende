@@ -109,8 +109,10 @@ export default {
 			var me = this ;
 			var ret = {} ;
 			var qualifiers = {} ;
-			qualifiers[wdid.p_fraction] = [] ;
-			qualifiers[wdid.p_fraction].push ( me.newClaimQuantity ( { amount:answer.fraction.text , property:wdid.p_fraction } ) . mainsnak ) ;
+			if ( question.type == wdid.q_multiple_choice_question && answer.fraction.text*1 > 0 ) {
+				qualifiers[wdid.p_fraction] = [] ;
+				qualifiers[wdid.p_fraction].push ( me.newClaimQuantity ( { amount:answer.fraction.text , property:wdid.p_fraction } ) . mainsnak ) ;
+			}
 			
 			if ( $.trim(answer.feedback.text) != '' ) {
 				qualifiers[wdid.p_hint] = [] ;
