@@ -38,7 +38,11 @@ export default {
 	mixins : [ wikibaseAPImixin ] ,
 	props : [ 'question' ] ,
 	data : function () { return { problems:{label_description_collision:false,empty_label_description:false,minimum_answers:false,fractions_100:false,blank_answers:false} , ld_double:'' , wdid } } ,
-	components : { 'edit-question-multiple-choice':EditQuestionMultipleChoice , 'edit-question-label-image':EditQuestionLabelImage , i18n } ,
+	components : {
+		'edit-question-multiple-choice':EditQuestionMultipleChoice ,
+		'edit-question-label-image':EditQuestionLabelImage ,
+		i18n
+	} ,
 	created : function () {
 		this.checkLabelDescription()
 	} ,
@@ -65,9 +69,9 @@ export default {
 				sum += parseInt ( v.fraction.text ) ;
 				if ( $.trim(v.text.text) == '' ) me.problems.blank_answers = true ;
 			} ) ;
-			me.problems.fractions_100 = sum != 100 ;
+			if ( me.question.type == wdid.q_multiple_choice_question ) me.problems.fractions_100 = sum != 100 ;
 			me.problems.minimum_answers = me.question.answers.length < 2 ;
-			me.problems.empty_label_description = (label=='' || text=='') ;
+			if ( me.question.type == wdid.q_multiple_choice_question ) me.problems.empty_label_description = (label=='' || text=='') ;
 			me.searchEntity ( label , 'item' , function ( d ) {
 				me.problems.label_description_collision = false ;
 				$.each ( d.search , function ( k , v ) {

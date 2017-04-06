@@ -4,31 +4,42 @@
 <h4 class="card-title"><i18n k='label image question'/></h4>
 
 <string-edit label='Label' placeholder='A name for the question' :value='question.label' noempty='1'></string-edit>
-<string-edit label='Text' placeholder='The actual text of the question' :value='question.text' noempty='1'></string-edit>
+<string-edit label='Text' placeholder='Text accompanying the question' :value='question.text'</string-edit>
 <string-edit label='Hint' placeholder='A hint that can show in case of problems' :value='question.hint'></string-edit>
 
 </div><div class="card-block">
 
 <div>
-<div><i18n k='image search query'></i18n><input type='text' class='eqli_image_query' v-model='image_query' @keyup.enter='onImageQueryChange' /></div>
-<div><i18n k='image name'></i18n><input type='text' v-model='image' @keyup.enter='onImageChange' /> <a v-if='valid_image' target='_blank' class='external' :href='"https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(image)'><i18n k='View file on Commons'/></a></div>
+	<div class='form-group row'>
+		<label class='col-sm-2 col-form-label'><i18n k='image search query'></i18n></label>
+		<div class='col-sm-5'><input type='text' class='form-control eqli_image_query' v-model='image_query' @keyup.enter='onImageQueryChange' /></div>
+		<div class='col-sm-4'><button class='btn' @click='onImageQueryChange'><i18n k='search commons'/></button></div>
+	</div>
+	<div class='form-group row'>
+		<label class='col-sm-2 col-form-label'><i18n k='image name'></i18n></label>
+		<div class='col-sm-5'><input type='text' class='form-control' v-model='image' @keyup.enter='onImageQueryChange' /></div>
+		<div class='col-sm-4'>
+			<button class='btn' @click='onImageChange'><i18n k='use this file'/></button>
+			<a v-if='valid_image' target='_blank' class='external' :href='"https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(image)'><i18n k='View file on Commons'/></a>
+		</div>
+	</div>
 </div>
 
 <div v-if='valid_image'>
 
-	<image-with-labels :image='image' :width='width' :height='width' :answers='question.answers' v-on:image_clicked='onImageClicked'></image-with-labels>
+	<image-with-labels :image='image' :width='width' :height='width' :answers='question.answers' :editing='1' :crop='crop_param' v-on:image_clicked='onImageClicked'></image-with-labels>
 	<div class='eqli_image_note'><i18n k='Click on the image to create an answer'/></div>
 
+	<div>
+		<i18n k='crop parameters'></i18n>
+		<input type='number' v-model='crop[0]' class='form-input col-sm-1' />/<input type='number' v-model='crop[1]' class='form-input col-sm-1' />
+		-
+		<input type='number' v-model='crop[2]' class='form-input col-sm-1' />/<input type='number' v-model='crop[3]' class='form-input col-sm-1' />
+	</div>
 
 	<div class='eqli_answer_container'>
 		<edit-answer v-for='(answer,num) in question.answers' :key='num' :answer='answer' :num='num' v-on:delete_answer='deleteAnswer'></edit-answer>
 	</div>
-
-<!-- v-on:answer-clicked='onNumberClicked' -->
-
-<!--
-<button class='btn btn-sm btn-outline-success' @click.prevent='addAnswer'>Add answer</button>
--->
 
 </div>
 
@@ -52,7 +63,7 @@ import ImageWithLabels from '../show_questions/image-with-labels.vue'
 export default {
 	props : [ 'question' ] ,
 	components : { 'string-edit':StringEdit , 'edit-answer':EditAnswer , i18n , 'image-with-labels':ImageWithLabels } ,
-	data : function () { return { image:'Apple II motherboard.jpg' , image_query:'' , image_candidates:[] , valid_image:false , width:800 , thumb_size:120 , num:1 } } ,
+	data : function () { return { image:'Apple II motherboard.jpg' , image_query:'' , image_candidates:[] , valid_image:false , width:800 , thumb_size:120 , num:1 , crop:[0,0,100,100] } } ,
 	mounted : function () {
 		$(this.$el).find('input.eqli_image_query').focus() ;
 	} ,
@@ -76,6 +87,7 @@ export default {
 		} ,
 		onImageChange : function () {
 			// TODO check via API if it's really a file on Commons
+			this.crop_param = '' ;
 			this.question.answers = [] ;
 			this.valid_image = true ;
 			this.num = 1 ;
@@ -110,8 +122,12 @@ export default {
 		} ,
 	} ,
 	watch : {
-//		image : function () {
-//		} ,
+		crop : {
+			handler : function () {
+				this.crop_param = (this.crop[0]*100)+','+(this.crop[1]*100)+','+(this.crop[2]*100)+','+(this.crop[3]*100) ;
+			} ,
+			deep:1
+		} ,
 	}
 }
 </script>

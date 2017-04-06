@@ -2,6 +2,7 @@
 <div style='position:relative;overflow:hidden;'>
 <div v-if='img_loaded' style='height:0px;position:relative;'>
 	<div class='image_with_labels_answer image_with_labels_toggler' @click.prevent='show_numbers=!show_numbers'>{{show_numbers?'○':'●'}}</div>
+	<div v-if='editing' class='iwl_crop_helper'></div>
 	<div v-if='show_numbers' v-for='(answer,answer_id) in answers' :style='getAnswerStyle(answer)' class='image_with_labels_answer' @click.prevent='$emit("answer-clicked",answer_id)'>{{answer.num}}</div>
 </div>
 <div v-else><i><i18n k='loading'/></i></div>
@@ -16,7 +17,7 @@ import { wdid , wikidata_site , user } from '../../config.js'
 import i18n from '../i18n.vue'
 
 export default {
-	props : [ 'image' , 'crop' , 'width' , 'height' , 'answers' ] ,
+	props : [ 'image' , 'crop' , 'width' , 'height' , 'answers' , 'editing' ] ,
 	data : function () { return { cropped:{} , url:'' , w:0 , h:0 , img_loaded:false , show_numbers:true } } ,
 	components : { i18n } ,
 	created : function () { this.init() } ,
@@ -101,6 +102,22 @@ export default {
 			me.img_loaded = true ;
 		} ,
 	} ,
+	watch : {
+		crop : function () {
+			var me = this ;
+			if ( !me.editing ) return ;
+			var p = me.crop.split(',') ;
+			if ( p.length != 4 ) return ;
+			var tl = me.virtual2real ( { x:p[0]*1 , y:p[1]*1 } ) ;
+			var br = me.virtual2real ( { x:p[2]*1 , y:p[3]*1 } ) ;
+			$(me.$el).find('div.iwl_crop_helper').css ( {
+				left:tl.x+'px' ,
+				top:tl.y+'px' ,
+				width:(br.x-tl.x)+'px' ,
+				height:(br.y-tl.y)+'px'
+			} ) ;
+		} ,
+	} ,
 }
 </script>
 
@@ -130,5 +147,11 @@ div.image_with_labels_answer {
 div.image_with_labels_answer:hover {
 	opacity:1;
 	box-shadow:3px 3px 2px #333;
+}
+div.iwl_crop_helper {
+	position:absolute;
+	z-index:3;
+	border:1px dotted red;
+	pointer-events: none;
 }
 </style>

@@ -105,7 +105,7 @@ export default {
 				} , 'json' ) ;
 			} ) ;
 		} ,
-		createAnswer : function ( answer ) {
+		createAnswer : function ( question , answer ) {
 			var me = this ;
 			var ret = {} ;
 			var qualifiers = {} ;
@@ -115,6 +115,10 @@ export default {
 			if ( $.trim(answer.feedback.text) != '' ) {
 				qualifiers[wdid.p_hint] = [] ;
 				qualifiers[wdid.p_hint].push ( me.newClaimMonolingual ( { text:answer.feedback.text , property:wdid.p_hint , language:answer.feedback.language } ) . mainsnak ) ;
+			}
+			
+			if ( typeof answer.position != 'undefined' ) { // label-image
+				qualifiers[wdid.p_position] = [ me.newClaimString ( { property:wdid.p_position , value:answer.position.x+','+answer.position.y } ) . mainsnak ] ;
 			}
 
 			if ( answer.type == wdid.p_text_answer ) {
@@ -176,7 +180,7 @@ export default {
 				item.claims.push ( me.newClaimItem ( { id:question.type , property:wdid.p_type } ) ) ; // Type
 				if ( $.trim(question.hint.text||'') != '' ) item.claims.push ( me.newClaimMonolingual ( { text:question.hint.text , property:wdid.p_hint , language:question.hint.language } ) ) ; // Hint
 				$.each ( question.answers , function ( k , answer ) {
-					item.claims.push ( me.createAnswer ( answer ) ) ;
+					item.claims.push ( me.createAnswer ( question , answer ) ) ;
 				} ) ;
 				
 				todo.push ( { data:item , add2quiz:question.add2quiz } ) ;
