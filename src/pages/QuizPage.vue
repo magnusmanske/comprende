@@ -51,6 +51,9 @@
 			<i18n k='current points in quiz' :params='[progress.points,progress.total_points]'></i18n>
 			<i18n v-if='progress.points_required>0' k='points required for quiz' :params='[progress.points_required]'></i18n>
 		</div>
+		<div>
+			<i18n k='this question is worth points' :params='[getCurrentQuestionPoints()]'></i18n>
+		</div>
 	</div>
 </div><!-- question-wrapper -->
 

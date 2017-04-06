@@ -24,6 +24,10 @@ export default {
 		getQuestion : function ( sorted_id ) {
 			return this.questions[this.sort_order[sorted_id]] ;
 		} ,
+		getCurrentQuestionPoints : function () {
+			var question = this.getCurrentQuestion() ;
+			return question.points ;
+		} ,
 		getNextQuestion : function () {
 			var me = this ;
 			me.current_question++ ;
