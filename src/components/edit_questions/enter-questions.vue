@@ -177,12 +177,26 @@ export default {
 				item.labels[question.label.language] = { language:question.label.language , value:question.label.text } ; // Label
 				item.descriptions[question.text.language] = { language:question.text.language , value:question.text.text } ; // Question text
 				
+				if ( question.type == wdid.q_label_item_question ) {
+					var qualifiers = {} ;
+					qualifiers[wdid.p_crop] = [ me.newClaimString ( {
+						property : wdid.p_crop ,
+						value : (question.crop[0]*100)+','+(question.crop[1]*100)+','+(question.crop[2]*100)+','+(question.crop[3]*100)
+					} ) . mainsnak ] ;
+					item.claims.push ( me.newClaimString ( {
+						property : wdid.p_image ,
+						value : question.image ,
+						qualifiers : qualifiers
+					} ) ) ;
+				}
+				
 				item.claims.push ( me.newClaimItem ( { id:question.type , property:wdid.p_type } ) ) ; // Type
 				if ( $.trim(question.hint.text||'') != '' ) item.claims.push ( me.newClaimMonolingual ( { text:question.hint.text , property:wdid.p_hint , language:question.hint.language } ) ) ; // Hint
 				$.each ( question.answers , function ( k , answer ) {
 					item.claims.push ( me.createAnswer ( question , answer ) ) ;
 				} ) ;
 				
+//				if ( question.type == wdid.q_label_item_question ) { console.log ( item ) ; return }
 				todo.push ( { data:item , add2quiz:question.add2quiz } ) ;
 			} ) ;
 			me.createAllItems ( todo ) ;

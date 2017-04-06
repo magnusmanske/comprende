@@ -24,6 +24,8 @@ export default {
 			if ( type == wdid.q_label_item_question ) ret = {
 				id : me.question_id_counter++ ,
 				type : type ,
+				crop:[0,0,100,100] ,
+				image : '' ,
 				label : { text:'' , language:me.getCurrentLanguage() , item:'' } ,
 				text : { text:'' , language:me.getCurrentLanguage() , item:'' } ,
 				hint : { text:'' , language:me.getCurrentLanguage() , item:'' } ,

@@ -17,24 +17,24 @@
 	</div>
 	<div class='form-group row'>
 		<label class='col-sm-2 col-form-label'><i18n k='image name'></i18n></label>
-		<div class='col-sm-5'><input type='text' class='form-control' v-model='image' @keyup.enter='onImageQueryChange' /></div>
+		<div class='col-sm-5'><input type='text' class='form-control' v-model='question.image' @keyup.enter='onImageQueryChange' /></div>
 		<div class='col-sm-4'>
 			<button class='btn' @click='onImageChange'><i18n k='use this file'/></button>
-			<a v-if='valid_image' target='_blank' class='external' :href='"https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(image)'><i18n k='View file on Commons'/></a>
+			<a v-if='valid_image' target='_blank' class='external' :href='"https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(question.image)'><i18n k='View file on Commons'/></a>
 		</div>
 	</div>
 </div>
 
 <div v-if='valid_image'>
 
-	<image-with-labels :image='image' :width='width' :height='width' :answers='question.answers' :editing='1' :crop='crop_param' v-on:image_clicked='onImageClicked'></image-with-labels>
+	<image-with-labels :image='question.image' :width='width' :height='width' :answers='question.answers' :editing='1' :crop='crop_param' v-on:image_clicked='onImageClicked'></image-with-labels>
 	<div class='eqli_image_note'><i18n k='Click on the image to create an answer'/></div>
 
 	<div>
 		<i18n k='crop parameters'></i18n>
-		<input type='number' v-model='crop[0]' class='form-input col-sm-1' />/<input type='number' v-model='crop[1]' class='form-input col-sm-1' />
+		<input type='number' v-model='question.crop[0]' class='form-input col-sm-1' />/<input type='number' v-model='question.crop[1]' class='form-input col-sm-1' />
 		-
-		<input type='number' v-model='crop[2]' class='form-input col-sm-1' />/<input type='number' v-model='crop[3]' class='form-input col-sm-1' />
+		<input type='number' v-model='question.crop[2]' class='form-input col-sm-1' />/<input type='number' v-model='question.crop[3]' class='form-input col-sm-1' />
 	</div>
 
 	<div class='eqli_answer_container'>
@@ -63,7 +63,7 @@ import ImageWithLabels from '../show_questions/image-with-labels.vue'
 export default {
 	props : [ 'question' ] ,
 	components : { 'string-edit':StringEdit , 'edit-answer':EditAnswer , i18n , 'image-with-labels':ImageWithLabels } ,
-	data : function () { return { image:'Apple II motherboard.jpg' , image_query:'' , image_candidates:[] , valid_image:false , width:800 , thumb_size:120 , num:1 , crop:[0,0,100,100] } } ,
+	data : function () { return { image_query:'' , image_candidates:[] , valid_image:false , width:800 , thumb_size:120 , num:1 } } ,
 	mounted : function () {
 		$(this.$el).find('input.eqli_image_query').focus() ;
 	} ,
@@ -117,14 +117,14 @@ export default {
 			} ) ;
 		} ,
 		onSelectImage : function ( num ) {
-			this.image = this.image_candidates[num].filename ;
+			this.question.image = this.image_candidates[num].filename ;
 			this.onImageChange() ;
 		} ,
 	} ,
 	watch : {
-		crop : {
+		'question.crop' : {
 			handler : function () {
-				this.crop_param = (this.crop[0]*100)+','+(this.crop[1]*100)+','+(this.crop[2]*100)+','+(this.crop[3]*100) ;
+				this.crop_param = (this.question.crop[0]*100)+','+(this.question.crop[1]*100)+','+(this.question.crop[2]*100)+','+(this.question.crop[3]*100) ;
 			} ,
 			deep:1
 		} ,

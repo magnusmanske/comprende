@@ -11,6 +11,7 @@
 <li v-if='problems.minimum_answers'><i18n k='A minimum of two answers is required'/></li>
 <li v-if='problems.fractions_100'><i18n k='The fractions of the answers need to sum up to 100'/></li>
 <li v-if='problems.blank_answers'><i18n k='Answer texts must not be empty'/></li>
+<li v-if='problems.image_required'><i18n k='An image must be selected'/></li>
 </ul>
 
 <edit-question-multiple-choice v-if='question.type==wdid.q_multiple_choice_question' :question='question'></edit-question-multiple-choice>
@@ -37,7 +38,7 @@ import EditQuestionLabelImage from './edit-question-label-image.vue'
 export default {
 	mixins : [ wikibaseAPImixin ] ,
 	props : [ 'question' ] ,
-	data : function () { return { problems:{label_description_collision:false,empty_label_description:false,minimum_answers:false,fractions_100:false,blank_answers:false} , ld_double:'' , wdid } } ,
+	data : function () { return { problems:{label_description_collision:false,empty_label_description:false,minimum_answers:false,fractions_100:false,blank_answers:false,image_required:false} , ld_double:'' , wdid } } ,
 	components : {
 		'edit-question-multiple-choice':EditQuestionMultipleChoice ,
 		'edit-question-label-image':EditQuestionLabelImage ,
@@ -72,6 +73,7 @@ export default {
 			if ( me.question.type == wdid.q_multiple_choice_question ) me.problems.fractions_100 = sum != 100 ;
 			me.problems.minimum_answers = me.question.answers.length < 2 ;
 			if ( me.question.type == wdid.q_multiple_choice_question ) me.problems.empty_label_description = (label=='' || text=='') ;
+			if ( me.question.type == wdid.q_label_item_question ) me.image_required = (me.question.image!='') ;
 			me.searchEntity ( label , 'item' , function ( d ) {
 				me.problems.label_description_collision = false ;
 				$.each ( d.search , function ( k , v ) {
