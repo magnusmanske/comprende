@@ -27,7 +27,6 @@
 </div>
 <div v-else>UNKNOWN ANSWER TYPE {{answer.type}}</div>
 
-
 <string-edit label='Feedback' :value='answer.feedback' placeholder='Feedback text, to show after answering'></string-edit>
 <string-edit label='Fraction' :value='answer.fraction' placeholder='An integer value from 0-100'></string-edit>
 </div>

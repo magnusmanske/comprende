@@ -7,6 +7,7 @@
 
 <div class="card card-stack">
 <div class="card-block">
+<i18n k='create new question'></i18n>
 <button class='btn btn-outline-success' @click.prevent='addNewQuestion(wdid.q_multiple_choice_question)'><i18n k='Add new multiple-choice question'/></button>
 <button class='btn btn-outline-success' @click.prevent='addNewQuestion(wdid.q_label_item_question)'><i18n k='Add new image label question'/></button>
 </div></div>

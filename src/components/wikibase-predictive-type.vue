@@ -35,8 +35,8 @@ export default {
 	components : { i18n } ,
 	mixins : [ wikibaseAPImixin , i18n ] ,
 	created : function () {
-		if ( typeof initial_text != 'undefined' ) this.text = this.initial_text ;
-		if ( typeof initial_item != 'undefined' ) this.item = this.initial_item ;
+		if ( typeof this.initial_text != 'undefined' ) this.text = this.initial_text ;
+		if ( typeof this.initial_item != 'undefined' ) this.item = this.initial_item ;
 		if ( typeof this.site == 'undefined' || this.site=='' ) this.site = wikibase_default_site ; // Default: main site
 		this.autofocus = !this.nofocus ;
 		if ( this.placeholder_key != '' ) this.placeholder = this.tr ( this.placeholder_key ) ;
@@ -147,6 +147,11 @@ export default {
 				me.showPredictiveListBox() ;
 			} ) ;
 			
+		}
+	} ,
+	watch : {
+		initial_text : function () {
+			console.log ( this.initial_text ) ;
 		}
 	} ,
 }
