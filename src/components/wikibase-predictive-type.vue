@@ -27,10 +27,10 @@
 <script>
 import i18n from './i18n.vue'
 import wikibaseAPImixin from '../mixins/wikibaseAPImixin.js'
-import { wikibase_default_site } from '../config.js'
+import { wdid , wikibase_default_site } from '../config.js'
 
 export default {
-	props : [ 'initial_item' , 'initial_text' , 'type' , 'site' , 'nofocus' , 'placeholder_key' ] , // FIXME text,item should not be mutated
+	props : [ 'initial_item' , 'initial_text' , 'type' , 'site' , 'nofocus' , 'placeholder_key' , 'type_filters' , 'max_results' ] ,
 	data : function () { return { state:'' , results:[] , last_text:'' , result_selected:-1 , text:'' , item:0 , placeholder:'' } } ,
 	components : { i18n } ,
 	mixins : [ wikibaseAPImixin , i18n ] ,
@@ -85,6 +85,39 @@ export default {
 			if ( me.result_selected < 0 ) return ;
 			me.setFromResult ( me.results[me.result_selected] ) ;
 		} ,
+		onFilterSearchResults : function ( d ) {
+			var me = this ;
+			
+			function fin () {
+				me.result_selected = -1 ;
+				me.results = d.search ;
+				me.state = 'loaded' ;
+			}
+			
+			if ( (me.type_filters||[]).length == 0 ) return fin() ; // No filters, return everything
+			
+			// This will limit search results to those of one of the types in type_filters
+			// Slow, but more precise
+			var to_load = [] ;
+			$.each ( d.search , function ( k , v ) { to_load.push ( v.id ) } ) ;
+			me.loadItems ( to_load , function () {
+				var search2 = [] ;
+				$.each ( d.search , function ( k , v ) {
+					if ( search2.length >= (me.max_results||7) ) return ;
+					var i = me.getItem ( v.id ) ;
+					if ( typeof i == 'undefined' ) return ;
+					var is_correct_type = false ;
+					var types = i.getItemValues ( wdid.p_type ) ;
+					$.each ( types , function ( dummy , qt ) {
+						if ( -1 == $.inArray ( qt , me.type_filters ) ) return ;
+						is_correct_type = true ;
+					} ) ;
+					if ( is_correct_type ) search2.push ( v ) ;
+				} ) ;
+				d.search = search2 ;
+				fin() ;
+			} ) ;
+		} ,
 		onKeyLift : function () {
 			var me = this ;
 			var input = me.getQueryInput() ;
@@ -103,12 +136,11 @@ export default {
 				action:'wbsearchentities',
 				search:me.text,
 				format:'json',
+				limit:(me.type_filters||[]).length==0?(me.max_results||7):50 ,
 				language:me.site.language,
 				type:me.type
 			} , function ( d ) {
-				me.result_selected = -1 ;
-				me.results = d.search ;
-				me.state = 'loaded' ;
+				me.onFilterSearchResults ( d ) ;
 			} ) . fail ( function () {
 				me.state = 'failed' ;
 			} ) . always ( function () {

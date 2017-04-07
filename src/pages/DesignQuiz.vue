@@ -27,7 +27,7 @@
 			<span v-else><i18n k='you need to log in to edit'/></span>
 		</div>
 		<div>
-			<wikibase-predictive-type style='display:inline;' placeholder_key='search for questions' v-on:set_item='setItemFromPredictive' nofocus='1' :site='wikibase_default_site' type='item'></wikibase-predictive-type>
+			<wikibase-predictive-type style='display:inline;' placeholder_key='search for questions' v-on:set_item='setItemFromPredictive' nofocus='1' :site='wikibase_default_site' type='item' :type_filters='wdid.q_questions'></wikibase-predictive-type>
 			<button v-if='item2add!=""' class='btn btn-outline-success' @click.prevent='addQuestion'><i18n k='add question to quiz'/></button>
 		</div>
 		<p><i18n k='total points in quiz' :params='[progress.total_points]'></i18n> <i18n k='total questions in quiz' :params='[progress.total]'></i18n></p>
