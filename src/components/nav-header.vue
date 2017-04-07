@@ -42,6 +42,7 @@
         </div>
         <div class="form-group row">
         	<div class="col-12"><label><input type='checkbox' v-model='user.settings.edit_interface_translations' /> <i18n k='edit_interface_translations'/></label></div>
+        	<div class="col-12"><label><input type='checkbox' v-model='user.settings.show_wikidata_links' /> <i18n k='show wikidata links in answers'/></label></div>
         </div>
       </div>
       <div class="modal-footer">

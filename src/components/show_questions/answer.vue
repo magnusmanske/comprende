@@ -13,7 +13,7 @@
 		<small v-if='label.language!=user.settings.language' style='color:#BBB'>[{{label.language}}]</small>
 	</div>
 </div>
-<div style='display:table-cell;white-space:nowrap;padding-left:3px;' v-if='type==wdid.p_wd_answer'> <small>[<a :href='"https://www.wikidata.org/wiki/"+answer_wd_q' target='_blank'>{{answer_wd_q}}</a>]</small></div>
+<div style='display:table-cell;white-space:nowrap;padding-left:3px;' v-if='type==wdid.p_wd_answer && user.settings.show_wikidata_links'> <small>[<a :href='"https://www.wikidata.org/wiki/"+answer_wd_q' target='_blank'>{{answer_wd_q}}</a>]</small></div>
 
 <div v-if='check_choice && state.selected && state.hint' class='answer_hint'>{{state.hint.text}}</div>
 
