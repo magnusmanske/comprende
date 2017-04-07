@@ -4,25 +4,20 @@
 
 <div class="card-block">
 	<slot name="warnings"></slot>
-</div>
 
-<div class="card-block">
 	<string-edit label='Label' placeholder='A name for the question' :value='question.label' noempty='1'></string-edit>
 	<string-edit label='Text' placeholder='The actual text of the question' :value='question.text' noempty='1'></string-edit>
 	<string-edit label='Hint' placeholder='A hint that can show in case of problems' :value='question.hint'></string-edit>
 </div>
 
 <div class="card-block">
-	<h4 class='card-title'><i18n k='transclusions'/></h4>
-	<div v-for='(tc,tc_num) in question.transclusions'>
-		{{tc}}
-	</div>
+	<edit-transclusions :question='question'></edit-transclusions>
 </div>
 
 <div class="card-block">
 	<h4 class='card-title'><i18n k='answers'/></h4>
 	<edit-answer v-for='(answer,num) in question.answers' :key='num' :answer='answer' :num='num' v-on:delete_answer='deleteAnswer'></edit-answer>
-	<button class='btn btn-sm btn-outline-success' @click.prevent='addAnswer'>Add answer</button>
+	<button class='btn btn-sm btn-outline-success' @click.prevent='addAnswer'><i18n k='Add answer'/></button>
 </div>
 
 </div>
@@ -30,13 +25,19 @@
 
 <script>
 import i18n from '../i18n.vue'
-import { wdid , wikibase_default_site } from '../../config.js'
+import { user , wdid , wikibase_default_site } from '../../config.js'
 import StringEdit from '../string-edit.vue'
 import EditAnswer from './edit-answer.vue'
+import edit_transclusions from './edit-transclusions.vue'
 
 export default {
 	props : [ 'question' ] ,
-	components : { 'string-edit':StringEdit , 'edit-answer':EditAnswer , i18n } ,
+	components : {
+		'string-edit':StringEdit ,
+		'edit-answer':EditAnswer ,
+		'edit-transclusions':edit_transclusions,
+		i18n ,
+	} ,
 	methods : {
 		addAnswer : function () {
 			this.question.answers.push ( {
@@ -48,7 +49,7 @@ export default {
 		} ,
 		deleteAnswer : function ( num ) {
 			this.question.answers.splice ( num , 1 ) ;
-		}
+		} ,
 	} ,
 }
 </script>

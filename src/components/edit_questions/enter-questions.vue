@@ -2,33 +2,30 @@
 <div>
 
 <div v-if='stage==2'>
-<h2 class="card-title"><i18n k='Enter new questions'/></h2>
-<edit-question v-for='(question,qnumber) in questions' :key='qnumber' :question='question' v-on:delete_question='deleteQuestion'></edit-question>
+	<h2 class="card-title"><i18n k='Enter new questions'/></h2>
+	<edit-question v-for='(question,qnumber) in questions' :key='qnumber' :question='question' v-on:delete_question='deleteQuestion'></edit-question>
 
-<div class="card card-stack">
-<div class="card-block">
-<i18n k='create new question'></i18n>
-<button class='btn btn-outline-success' @click.prevent='addNewQuestion(wdid.q_multiple_choice_question)'><i18n k='Add new multiple-choice question'/></button>
-<button class='btn btn-outline-success' @click.prevent='addNewQuestion(wdid.q_label_item_question)'><i18n k='Add new image label question'/></button>
-</div></div>
+	<div class='card'>
+		<h3 class="card-header"><i18n k='Add and create new questions'/></h3>
 
+		<div class="card-block">
+			<i18n k='create new question'></i18n>
+			<button class='btn btn-outline-success' @click.prevent='addNewQuestion(wdid.q_multiple_choice_question)'><i18n k='Add new multiple-choice question'/></button>
+			<button class='btn btn-outline-success' @click.prevent='addNewQuestion(wdid.q_label_item_question)'><i18n k='Add new image label question'/></button>
+		</div>
 
-<div class="card card-stack">
-<div class="card-block">
+		<div class="card-block">
 
-<div><label><input type='checkbox' v-model='create_new_quiz' /> <i18n k='Create new quiz with the selected questions'/></label></div>
+			<div><label><input type='checkbox' v-model='create_new_quiz' /> <i18n k='Create new quiz with the selected questions'/></label></div>
+			<div><string-edit label='Name of quiz' :value='quiz'></string-edit></div>
 
-<div>
-<string-edit label='Name of quiz' :value='quiz'></string-edit>
-</div>
+			<div v-if='questions.length>0'>
+				<button v-if='canBeImported' class='btn btn-outline-primary' @click.prevent='doCreate'>Create questions {{create_new_quiz?'and quiz':''}} in Comprende!</button>
+				<div v-else class='alert alert-danger'><i18n k='There are problems in questions' :params='[problems]' /></div>
+			</div>
 
-<div v-if='questions.length>0'>
-<button v-if='canBeImported' class='btn btn-outline-primary' @click.prevent='doCreate'>Create questions {{create_new_quiz?'and quiz':''}} in Comprende!</button>
-<div v-else class='alert alert-danger'><i18n k='There are problems in questions' :params='[problems]' /></div>
-</div>
-
-</div>
-</div>
+		</div>
+	</div>
 </div>
 
 <div v-if='stage==3'>

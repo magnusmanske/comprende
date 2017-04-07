@@ -2,11 +2,7 @@
 <div>
 
 <div v-if='loaded'>
-<div v-for='t in wp' class='wikipedia_section'>
-	<!--<div style='font-family:monospace;float:right;margin-left:5px;margin-bottom:5px;'>[<a target='_blank' :href='t.url'>WP</a>]</div>-->
-	<div v-html='t.text'></div>
-	<div class='license_note'>©<a target='_blank' :href='t.url'><i18n k='Wikipedia'/></a>, <a href='https://creativecommons.org/licenses/by-sa/3.0/' target='_blank' class='external'><i18n k='CC-BY-SA-3.0'/></a></div>
-</div>
+	<mediawiki-transclusion v-for='w in wp' :page_url='w.page_url' :section='w.section' :oldid='w.oldid'></mediawiki-transclusion>
 </div>
 
 <div v-else><i><i18n k='loading'/></i></div>
@@ -19,23 +15,15 @@
 import i18n from '../i18n.vue'
 import { wdid } from '../../config.js'
 import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
+import mediawiki_transclusion from './mediawiki-transclusion.vue'
 
 export default {
 	mixins : [ wikibaseAPImixin ] ,
-	components : { i18n } ,
+	components : { i18n , 'mediawiki-transclusion':mediawiki_transclusion } ,
 	props : [ 'q' ] ,
 	data : function () { return { wp:[] , loaded:false } } ,
 	created : function () { this.init() } ,
 	methods : {
-		wp_html2text : function ( s ) {
-			var o = $(s) ;
-			o.find('script').remove() ;
-			o.find('ol.references').remove() ;
-			o.find('sup.reference').remove() ;
-			o.find('a').each ( function () { $(this).replaceWith ( $(this).text() ) } ) ;
-			s = o.html() ;
-			return s ;
-		} ,
 		init : function () {
 			var me = this ;
 			me.loaded = false ;
@@ -53,6 +41,8 @@ export default {
 				var url = s.mainsnak.datavalue.value ;
 				var m = url.match ( /^(https{0,1}:\/\/.+?)\/wiki\/(.+)$/ ) ;
 				if ( m === null ) return ; // Paranoia
+				
+				
 				var api = m[1] + '/w/api.php?callback=?' ;
 				var page = m[2] ;
 				// https://en.wikipedia.org/w/api.php?action=parse&oldid=755909779&section=0&prop=text&disabletoc=1&mobileformat=1&noimages=1
@@ -66,17 +56,13 @@ export default {
 				}
 				
 				if ( typeof section == 'undefined' ) return ; // Transclude only section
+
+				me.wp.push ( {
+					page_url : s.mainsnak.datavalue.value ,
+					section ,
+					oldid ,
+				} ) ;
 				
-				var params = { action:'parse' , prop:'text' , format:'json' , disabletoc:1 , mobileformat:1 , noimages:1 , section:section } ;
-				if ( typeof oldid == 'undefined' ) params.title = page ;
-				else params.oldid = oldid ;
-				
-				running++ ;
-				$.getJSON ( api , params , function ( d ) {
-					if ( typeof (d.parse||{}).text == 'undefined' ) return ;
-					me.wp.push ( { text:me.wp_html2text(d.parse.text['*']) , format:'html' , url:url } ) ;
-				} )
-				.always ( fin ) ;
 			} ) ;
 			
 			fin() ;
@@ -89,11 +75,4 @@ export default {
 </script>
 
 <style>
-div.wikipedia_section {
-	font-size:10pt;
-	line-height:1.2em;
-	color:#333;
-	padding-left:5px;
-	border-left:10px solid #57BCD9 ;
-}
 </style>

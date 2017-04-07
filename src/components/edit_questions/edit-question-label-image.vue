@@ -1,15 +1,17 @@
 <template>
-<div>
+<div class='card'>
 <h3 class="card-header"><i18n k='label image question'/></h3>
 
 <div class="card-block">
 	<slot name="warnings"></slot>
-</div>
 
-<div class="card-block">
 	<string-edit label='Label' placeholder='A name for the question' :value='question.label' noempty='1'></string-edit>
 	<string-edit label='Text' placeholder='Text accompanying the question' :value='question.text'</string-edit>
 	<string-edit label='Hint' placeholder='A hint that can show in case of problems' :value='question.hint'></string-edit>
+</div>
+
+<div class="card-block">
+	<edit-transclusions :question='question'></edit-transclusions>
 </div>
 
 <div class="card-block">
@@ -64,10 +66,17 @@ import { wdid , wikibase_default_site } from '../../config.js'
 import StringEdit from '../string-edit.vue'
 import EditAnswer from './edit-answer.vue'
 import ImageWithLabels from '../show_questions/image-with-labels.vue'
+import edit_transclusions from './edit-transclusions.vue'
 
 export default {
 	props : [ 'question' ] ,
-	components : { 'string-edit':StringEdit , 'edit-answer':EditAnswer , i18n , 'image-with-labels':ImageWithLabels } ,
+	components : {
+		'string-edit':StringEdit ,
+		'edit-answer':EditAnswer ,
+		'image-with-labels':ImageWithLabels ,
+		'edit-transclusions':edit_transclusions,
+		i18n ,
+	} ,
 	data : function () { return { image_query:'' , image_candidates:[] , valid_image:false , width:800 , thumb_size:120 , num:1 } } ,
 	mounted : function () {
 		$(this.$el).find('input.eqli_image_query').focus() ;
