@@ -9,31 +9,26 @@ export default {
 		} ,
 		getNewQuestion : function ( type , props ) {
 			var me = this ;
-			var ret = {} ;
-			if ( type == wdid.q_multiple_choice_question ) ret = {
+			var ret = {
 				id : me.question_id_counter++ ,
 				type : type ,
 				label : { text:'' , language:me.getCurrentLanguage() , item:'' } ,
 				text : { text:'' , language:me.getCurrentLanguage() , item:'' } ,
 				hint : { text:'' , language:me.getCurrentLanguage() , item:'' } ,
 				answers : [] ,
+				transclusions : [] ,
 				import2wb : true ,
 				add2quiz : true ,
 				can_be_imported : true ,
 			} ;
-			if ( type == wdid.q_label_item_question ) ret = {
-				id : me.question_id_counter++ ,
-				type : type ,
-				crop:[0,0,100,100] ,
-				image : '' ,
-				label : { text:'' , language:me.getCurrentLanguage() , item:'' } ,
-				text : { text:'' , language:me.getCurrentLanguage() , item:'' } ,
-				hint : { text:'' , language:me.getCurrentLanguage() , item:'' } ,
-				answers : [] ,
-				import2wb : true ,
-				add2quiz : true ,
-				can_be_imported : true ,
-			} ;
+
+			if ( type == wdid.q_multiple_choice_question ) {
+			}
+			if ( type == wdid.q_label_item_question ) {
+				ret.crop = [0,0,100,100] ;
+				ret.image = '' ;
+			}
+
 			$.each ( (props||{}) , function ( k , v ) {
 				ret[k] = v ;
 			} ) ;

@@ -1,55 +1,60 @@
 <template>
 <div>
+<h3 class="card-header"><i18n k='label image question'/></h3>
+
 <div class="card-block">
-<h4 class="card-title"><i18n k='label image question'/></h4>
+	<slot name="warnings"></slot>
+</div>
 
-<string-edit label='Label' placeholder='A name for the question' :value='question.label' noempty='1'></string-edit>
-<string-edit label='Text' placeholder='Text accompanying the question' :value='question.text'</string-edit>
-<string-edit label='Hint' placeholder='A hint that can show in case of problems' :value='question.hint'></string-edit>
+<div class="card-block">
+	<string-edit label='Label' placeholder='A name for the question' :value='question.label' noempty='1'></string-edit>
+	<string-edit label='Text' placeholder='Text accompanying the question' :value='question.text'</string-edit>
+	<string-edit label='Hint' placeholder='A hint that can show in case of problems' :value='question.hint'></string-edit>
+</div>
 
-</div><div class="card-block">
-
-<div>
-	<div class='form-group row'>
-		<label class='col-sm-2 col-form-label'><i18n k='image search query'></i18n></label>
-		<div class='col-sm-5'><input type='text' class='form-control eqli_image_query' v-model='image_query' @keyup.enter='onImageQueryChange' /></div>
-		<div class='col-sm-4'><button class='btn' @click='onImageQueryChange'><i18n k='search commons'/></button></div>
+<div class="card-block">
+	<div>
+		<div class='form-group row'>
+			<label class='col-sm-2 col-form-label'><i18n k='image search query'></i18n></label>
+			<div class='col-sm-5'><input type='text' class='form-control eqli_image_query' v-model='image_query' @keyup.enter='onImageQueryChange' /></div>
+			<div class='col-sm-4'><button class='btn' @click='onImageQueryChange'><i18n k='search commons'/></button></div>
+		</div>
+		<div class='form-group row'>
+			<label class='col-sm-2 col-form-label'><i18n k='image name'></i18n></label>
+			<div class='col-sm-5'><input type='text' class='form-control' v-model='question.image' @keyup.enter='onImageQueryChange' /></div>
+			<div class='col-sm-4'>
+				<button class='btn' @click='onImageChange'><i18n k='use this file'/></button>
+				<a v-if='valid_image' target='_blank' class='external' :href='"https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(question.image)'><i18n k='View file on Commons'/></a>
+			</div>
+		</div>
 	</div>
-	<div class='form-group row'>
-		<label class='col-sm-2 col-form-label'><i18n k='image name'></i18n></label>
-		<div class='col-sm-5'><input type='text' class='form-control' v-model='question.image' @keyup.enter='onImageQueryChange' /></div>
-		<div class='col-sm-4'>
-			<button class='btn' @click='onImageChange'><i18n k='use this file'/></button>
-			<a v-if='valid_image' target='_blank' class='external' :href='"https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(question.image)'><i18n k='View file on Commons'/></a>
+
+	<div v-if='valid_image'>
+
+		<image-with-labels :image='question.image' :width='width' :height='width' :answers='question.answers' :editing='1' :crop='crop_param' v-on:image_clicked='onImageClicked'></image-with-labels>
+		<div class='eqli_image_note'><i18n k='Click on the image to create an answer'/></div>
+
+		<div>
+			<i18n k='crop parameters'></i18n>
+			<input type='number' v-model='question.crop[0]' class='form-input col-sm-1' />/<input type='number' v-model='question.crop[1]' class='form-input col-sm-1' />
+			-
+			<input type='number' v-model='question.crop[2]' class='form-input col-sm-1' />/<input type='number' v-model='question.crop[3]' class='form-input col-sm-1' />
+		</div>
+
+		<div class='eqli_answer_container'>
+			<h4 class='card-title'><i18n k='answers'/></h4>
+			<edit-answer v-for='(answer,num) in question.answers' :key='num' :answer='answer' :num='num' v-on:delete_answer='deleteAnswer'></edit-answer>
+		</div>
+
+	</div>
+
+	<div v-else> <!-- No valid image-->
+		<div v-for='(i,num) in image_candidates' :key='i.filename' class='eqil_thumbnail' :style='{width:thumb_size+"px",height:thumb_size+"px","max-height":thumb_size+"px"}'>
+			<img :src='i.url' style='cursor:pointer' @click.prevent='onSelectImage(num)' />
 		</div>
 	</div>
 </div>
 
-<div v-if='valid_image'>
-
-	<image-with-labels :image='question.image' :width='width' :height='width' :answers='question.answers' :editing='1' :crop='crop_param' v-on:image_clicked='onImageClicked'></image-with-labels>
-	<div class='eqli_image_note'><i18n k='Click on the image to create an answer'/></div>
-
-	<div>
-		<i18n k='crop parameters'></i18n>
-		<input type='number' v-model='question.crop[0]' class='form-input col-sm-1' />/<input type='number' v-model='question.crop[1]' class='form-input col-sm-1' />
-		-
-		<input type='number' v-model='question.crop[2]' class='form-input col-sm-1' />/<input type='number' v-model='question.crop[3]' class='form-input col-sm-1' />
-	</div>
-
-	<div class='eqli_answer_container'>
-		<edit-answer v-for='(answer,num) in question.answers' :key='num' :answer='answer' :num='num' v-on:delete_answer='deleteAnswer'></edit-answer>
-	</div>
-
-</div>
-
-<div v-else> <!-- No valid image-->
-	<div v-for='(i,num) in image_candidates' :key='i.filename' class='eqil_thumbnail' :style='{width:thumb_size+"px",height:thumb_size+"px","max-height":thumb_size+"px"}'>
-		<img :src='i.url' style='cursor:pointer' @click.prevent='onSelectImage(num)' />
-	</div>
-</div>
-
-</div>
 </div>
 </template>
 

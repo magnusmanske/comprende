@@ -2,7 +2,8 @@
 <div>
 <div class="card card-stack">
 
-<ul :class='getClass'>
+<edit-question-multiple-choice v-if='question.type==wdid.q_multiple_choice_question' :question='question'>
+<ul :class='getClass' slot='warnings'>
 <li v-if='problems.label_description_collision'>
 	<div><i18n k='A question with this exact label and description in this language already exists as'></i18n> <router-link :to='"/question/"+ld_double' target='_blank'>{{ld_double}}</router-link>.</div>
 	<div><i18n k='You need to change the label or the description, otherwise the question can not be imported'/></div>
@@ -13,9 +14,21 @@
 <li v-if='problems.blank_answers'><i18n k='Answer texts must not be empty'/></li>
 <li v-if='problems.image_required'><i18n k='An image must be selected'/></li>
 </ul>
+</edit-question-multiple-choice>
 
-<edit-question-multiple-choice v-if='question.type==wdid.q_multiple_choice_question' :question='question'></edit-question-multiple-choice>
-<edit-question-label-image v-else-if='question.type==wdid.q_label_item_question' :question='question'></edit-question-label-image>
+<edit-question-label-image v-else-if='question.type==wdid.q_label_item_question' :question='question'>
+<ul :class='getClass' slot='warnings'>
+<li v-if='problems.label_description_collision'>
+	<div><i18n k='A question with this exact label and description in this language already exists as'></i18n> <router-link :to='"/question/"+ld_double' target='_blank'>{{ld_double}}</router-link>.</div>
+	<div><i18n k='You need to change the label or the description, otherwise the question can not be imported'/></div>
+</li>
+<li v-if='problems.empty_label_description'><i18n k='both a label and a text are required'/></li>
+<li v-if='problems.minimum_answers'><i18n k='A minimum of two answers is required'/></li>
+<li v-if='problems.fractions_100'><i18n k='The fractions of the answers need to sum up to 100'/></li>
+<li v-if='problems.blank_answers'><i18n k='Answer texts must not be empty'/></li>
+<li v-if='problems.image_required'><i18n k='An image must be selected'/></li>
+</ul>
+</edit-question-label-image>
 <div v-else>Unknown question type "{{question.type}}"</div>
 
 <div class="card-block">

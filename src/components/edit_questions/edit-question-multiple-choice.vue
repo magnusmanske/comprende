@@ -1,19 +1,30 @@
 <template>
 <div>
+<h3 class="card-header"><i18n k='Multiple choice question'/></h3>
+
 <div class="card-block">
-<h4 class="card-title"><i18n k='Multiple choice question'/></h4>
-
-<string-edit label='Label' placeholder='A name for the question' :value='question.label' noempty='1'></string-edit>
-<string-edit label='Text' placeholder='The actual text of the question' :value='question.text' noempty='1'></string-edit>
-<string-edit label='Hint' placeholder='A hint that can show in case of problems' :value='question.hint'></string-edit>
-
-</div><div class="card-block">
-
-<edit-answer v-for='(answer,num) in question.answers' :key='num' :answer='answer' :num='num' v-on:delete_answer='deleteAnswer'></edit-answer>
-
-<button class='btn btn-sm btn-outline-success' @click.prevent='addAnswer'>Add answer</button>
-
+	<slot name="warnings"></slot>
 </div>
+
+<div class="card-block">
+	<string-edit label='Label' placeholder='A name for the question' :value='question.label' noempty='1'></string-edit>
+	<string-edit label='Text' placeholder='The actual text of the question' :value='question.text' noempty='1'></string-edit>
+	<string-edit label='Hint' placeholder='A hint that can show in case of problems' :value='question.hint'></string-edit>
+</div>
+
+<div class="card-block">
+	<h4 class='card-title'><i18n k='transclusions'/></h4>
+	<div v-for='(tc,tc_num) in question.transclusions'>
+		{{tc}}
+	</div>
+</div>
+
+<div class="card-block">
+	<h4 class='card-title'><i18n k='answers'/></h4>
+	<edit-answer v-for='(answer,num) in question.answers' :key='num' :answer='answer' :num='num' v-on:delete_answer='deleteAnswer'></edit-answer>
+	<button class='btn btn-sm btn-outline-success' @click.prevent='addAnswer'>Add answer</button>
+</div>
+
 </div>
 </template>
 
