@@ -50,7 +50,7 @@ export default {
 				var question = me.questions[qid] ;
 				if ( typeof question == 'undefined' ) return ;
 				var s = question.statement ;
-				if ( typeof ((s.qualifiers||{})[wdid.p_points]||[])[0] != 'undefined' ) {
+				if ( typeof (((s||{}).qualifiers||{})[wdid.p_points]||[])[0] != 'undefined' ) {
 					question.points = s.qualifiers[wdid.p_points][0].datavalue.value.amount * 1 ;
 				}
 				me.progress.total++ ;
