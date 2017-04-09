@@ -18,7 +18,7 @@
 </div>
 </div>
 
-<div style='text-align:center;border-top:1px solid #EEE;' :class='numberSelectedClass'>
+<div style='text-align:center;border-top:1px solid #EEE;' :class='numberSelectedClass' class='no-print'>
 	<i18n k='answers required selected' :params='[num_required,num_selected]'/>
 </div>
 </div>
@@ -246,6 +246,22 @@ div.qli_answers_container {
 @media screen and (orientation:portrait) {
 }
 @media screen and (orientation:landscape) {
+	div.qli_answers_container {
+		display:table-cell;
+		width:33%;
+		max-width:33%;
+		zoom:0.8;
+	}
+	div.qli_image_container {
+		display:table-cell;
+		width:66%;
+	}
+	div.qli_payload_container {
+		display:table-row;
+	}
+}
+
+@media print {
 	div.qli_answers_container {
 		display:table-cell;
 		width:33%;

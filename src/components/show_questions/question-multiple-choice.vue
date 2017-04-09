@@ -8,8 +8,10 @@
 </h4>
 <h6 class="card-subtitle mb-2 text-muted">{{subtitle}}</h6>
 <question-intro :q='q'></question-intro>
+<div class='answer_block'>
 <answer v-for='(state,num) in answers' :key='num' :state='state' :check_choice='options.show_choices'></answer>
-<div style='text-align:center;border-top:1px solid #EEE;' :class='numberSelectedClass'><i18n k='answers required selected' :params='[num_required,num_selected]'/></div>
+</div>
+<div style='text-align:center;border-top:1px solid #EEE;' :class='numberSelectedClass' class='no-print'><i18n k='answers required selected' :params='[num_required,num_selected]'/></div>
 
 </div>
 </div>

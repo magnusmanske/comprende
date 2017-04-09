@@ -53,4 +53,18 @@ div.bottom_buttons {
 
 }
 
+@media screen {
+	.print-only {
+		display:none !important;
+	}
+}
+
+@media print
+{    
+    .no-print, .no-print *
+    {
+        display: none !important;
+    }
+}
+
 </style>

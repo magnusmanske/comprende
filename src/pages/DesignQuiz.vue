@@ -3,20 +3,26 @@
 <nav-header></nav-header>
 
 <div v-if='loaded' class="card">
-	<div class="card-block">
+
+	<div class='print-only'>
+		<h1>{{quiz_label.text}}</h1>
+		<p class='quiz_description'>{{quiz_desc.text}}</p>
+	</div>
+
+	<div class="card-block no-print">
 		<h1 class="card-title">
 			<div style='float:right;font-size:10pt;'>[<a :href='"./index.php?title=Item:"+q' target='_blank'>{{q}}</a>]</div>
 			<i18n k='quiz'/>
 		</h1>
 	</div>
 
-	<div class="card-block">
+	<div class="card-block no-print">
 <!--		<h3><i18n k='quiz details'/></h3>-->
 		<string-edit label='Label' placeholder='A name for the quiz' :value='quiz_label' v-on:enter='saveChanges'></string-edit>
 		<string-edit label='Description' placeholder='A description for the question' :value='quiz_desc' v-on:enter='saveChanges'></string-edit>
 	</div>
 
-	<div class="card-block">
+	<div class="card-block no-print">
 		<div style='margin-bottom:5px;'>
 			<router-link v-if='!wasChanged()' class='btn btn-outline-primary' :to='"/quiz/"+q'><i18n k='play quiz'/></router-link>
 			<span v-if='user.settings.can_edit'>
@@ -34,15 +40,16 @@
 	</div>
 
 	<div class="card-block">
-		<h3><i18n k='questions'/></h3>
-		<div><i18n k='drag drop questions'/></div>
+		<h3 class='no-print'><i18n k='questions'/></h3>
+		<div class='no-print'><i18n k='drag drop questions'/></div>
 		<div class='design_quiz_question_container'>
 
 			<div v-for='(question_id,num) in sort_order' :key='question_id' class='card design_quiz_question_wrapper' :style='(num==current_question?"border-color:#2F74D0;":"")' @click.prevent='current_question=num'>
 				<div class='design_quiz_question_header card-header'>
-					[<router-link :to='"/question/"+questions[question_id].q'>{{questions[question_id].q}}</router-link>] 
+					<span class='no-print'>[<router-link :to='"/question/"+questions[question_id].q'>{{questions[question_id].q}}</router-link>]</span>
+					<span class='print-only'>#{{num+1}}</span>
 					<i18n k='quetion_counts' :params='[questions[question_id].points]'></i18n>
-					<small>[<a href='#' @click.prevent='changePoints(num)'><i18n k='edit'/></a>]</small>
+					<span class='no-print'><small>[<a href='#' @click.prevent='changePoints(num)'><i18n k='edit'/></a>]</small></span>
 				</div>
 				<question class='zoom_half' :q='questions[question_id].q' thumbnail='1'></question>
 			</div>
@@ -51,7 +58,7 @@
 	</div>
 </div>
 
-<div v-else-if='typeof q=="undefined"'>
+<div v-else-if='typeof q=="undefined"' class='no-print'>
 	<span v-if='user.settings.can_edit'>
 		<button class='btn btn-outline-primary' @click.prevent='createNewQuiz'><i18n k='create new quiz'/></button>
 	</span>
@@ -350,4 +357,17 @@ transform-origin: left top;
 	-moz-transform: scale(0.5);
 	-moz-transform-origin: 0px 0px;*/
 }
+
+@media print {
+
+div.design_quiz_question_container {
+	display:block;
+}
+
+.quiz_description {
+	font-size:13pt;
+}
+
+}
+
 </style>

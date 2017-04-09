@@ -67,4 +67,17 @@ export default {
 </script>
 
 <style>
+
+div.question_container {
+	page-break-inside: avoid;
+	border:0px;
+	border-top:1px solid #DDD;
+	break-inside: avoid;
+}
+
+div.question {
+	page-break-inside: avoid;
+	break-inside: avoid;
+}
+
 </style>

@@ -1,7 +1,7 @@
 <template>
 <div style='position:relative;overflow:hidden;'>
 <div v-if='img_loaded' style='height:0px;position:relative;'>
-	<div class='image_with_labels_answer image_with_labels_toggler' @click.prevent='show_numbers=!show_numbers'>{{show_numbers?'○':'●'}}</div>
+	<div class='image_with_labels_answer image_with_labels_toggler no-print' @click.prevent='show_numbers=!show_numbers'>{{show_numbers?'○':'●'}}</div>
 	<div v-if='editing' class='iwl_crop_helper'></div>
 	<div v-if='show_numbers' v-for='(answer,answer_id) in answers' :style='getAnswerStyle(answer)' class='image_with_labels_answer' :class='{iwla_matched:answer.number_highlight}' @click.prevent='$emit("answer-clicked",answer_id)'>{{answer.num}}</div>
 </div>

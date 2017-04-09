@@ -1,5 +1,5 @@
 <template>
-<nav class="navbar navbar-toggleable-md navbar-light bg-faded" style='margin-bottom:10px;'>
+<nav class="navbar navbar-toggleable-md navbar-light bg-faded no-print" style='margin-bottom:10px;'>
 	<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
 	</button>

@@ -126,4 +126,12 @@ div.answer_checkmark_container {
 div.answer_text_container {
 	display:inline-block;
 }
+
+@media print {
+
+div.answer > div.click {
+	background-color:none;
+}
+
+}
 </style>

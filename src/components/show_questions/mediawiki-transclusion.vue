@@ -33,12 +33,16 @@ export default {
 					href = me.api.replace(/\/[^\/]+$/,'') + "/index.php?title=" + encodeURIComponent(m[1]) ;
 					$(a).attr({href:href,target:'_blank'}).addClass('wikipedia') ;
 				} ) ;
+				for ( var n = 1 ; n < 6 ; n++ ) o.find('h'+n).each ( function () {
+					var p = $(this) ;
+					var h = 'h'+(n+2) ;
+					p.replaceWith('<'+h+'>' + p.html() +'</'+h+'>') ;
+				} ) ;
 			} else {
 				o.find('script').remove() ;
 				o.find('ol.references').remove() ;
 				o.find('sup.reference').remove() ;
 				o.find('.infobox').remove() ;
-				o.find('.noprint').remove() ;
 				o.find('.mw-editsection').remove() ;
 				o.find('div.hatnote').remove() ;
 				o.find('div.thumb').remove() ;
@@ -49,6 +53,7 @@ export default {
 				} ) ;
 				o.find('a').each ( function () { $(this).replaceWith ( $(this).text() ) } ) ;
 			}
+			o.find('.noprint').remove() ;
 			return o.html() ;
 		} ,
 		init : function () {
