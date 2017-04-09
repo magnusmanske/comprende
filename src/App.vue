@@ -31,7 +31,9 @@ div.page {
 	color:#DDD;
 }
 a.external {
-	color:#02d875;
+	color:#2DC800;
+}
+a.wikipedia {
 }
 
 

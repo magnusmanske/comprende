@@ -11,7 +11,7 @@
 						<input type='text' v-model='tc.page' class='form-control col-sm-3' placeholder='page title' @keyup.enter='updateTransclusion(tc_num)' />
 						<div class='col-sm-1'><i18n k='section'/></div>
 						<input type='number' v-model='tc.section' class='form-control col-sm-1' placeholder='section' />
-						<input type='number' v-model='tc.oldid' class='form-control col-sm-1' placeholder='oldid' />
+						<input type='number' v-model='tc.oldid' class='form-control col-sm-1' placeholder='oldid' style='display:none' />
 						<button class='col-sm-1 btn btn-outline-secondary' @click='updateTransclusion(tc_num)'><i18n k='show'/></button>
 						<button class='col-sm-2 btn btn-outline-danger' @click.prevent='deleteTransclusion(tc_num)'><i18n k='Remove'/></button>
 					</div>
@@ -31,22 +31,35 @@
 import i18n from '../i18n.vue'
 import { user , wdid , wikibase_default_site } from '../../config.js'
 import mediawiki_transclusion from '../show_questions/mediawiki-transclusion.vue'
+import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
 
 export default {
 	props : [ 'question' ] ,
+	mixins : [ wikibaseAPImixin ] ,
+	data : function () { return { wdid } } ,
 	components : {
 		'mediawiki-transclusion':mediawiki_transclusion ,
 		i18n ,
 	} ,
 	methods : {
 		addTransclusion : function () {
-			this.question.transclusions.push ( {
+			var me = this ;
+			me.question.transclusions.push ( {
 				type : 'wikipedia' ,
 				page_url : '' ,
 				language : user.settings.language ,
 				page : '' ,
 				section : '0' ,
-				oldid : ''
+				oldid : '' ,
+				getStatement : function () {
+					if ( this.page_url == '' ) return ;
+					var qualifiers = [] ;
+					qualifiers.push ( me.newClaimQuantity ( { property:wdid.p_wikipedia_section , amount:this.section } ) . mainsnak ) ;
+					if ( this.oldid != '' ) qualifiers.push ( me.newClaimQuantity ( { property:wdid.p_wikipedia_oldid , amount:this.oldid } ) . mainsnak ) ;
+					var s = me.newClaimString ( { property:wdid.p_wikipedia_page , value:this.page_url , qualifiers } ) ;
+					s.mainsnak.datatype = 'url' ;
+					return s ;
+				}
 			} ) ;
 		} ,
 		deleteTransclusion : function ( num ) {

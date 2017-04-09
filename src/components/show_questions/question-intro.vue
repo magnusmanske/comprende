@@ -2,7 +2,7 @@
 <div>
 
 <div v-if='loaded'>
-	<mediawiki-transclusion v-for='w in wp' :page_url='w.page_url' :section='w.section' :oldid='w.oldid'></mediawiki-transclusion>
+	<mediawiki-transclusion v-for='w in wp' :page_url='w.page_url' :section='w.section' :oldid='w.oldid' :detailed='detailed'></mediawiki-transclusion>
 </div>
 
 <div v-else><i><i18n k='loading'/></i></div>
@@ -20,7 +20,7 @@ import mediawiki_transclusion from './mediawiki-transclusion.vue'
 export default {
 	mixins : [ wikibaseAPImixin ] ,
 	components : { i18n , 'mediawiki-transclusion':mediawiki_transclusion } ,
-	props : [ 'q' ] ,
+	props : [ 'q' , 'detailed' ] ,
 	data : function () { return { wp:[] , loaded:false } } ,
 	created : function () { this.init() } ,
 	methods : {

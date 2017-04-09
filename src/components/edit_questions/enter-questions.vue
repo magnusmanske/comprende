@@ -190,13 +190,20 @@ export default {
 					} ) ) ;
 				}
 				
+				if ( question.transclusions.length > 0 ) {
+					$.each ( question.transclusions , function ( num , tr ) {
+						var s = tr.getStatement() ;
+						if ( typeof s == 'undefined' ) return ;
+						item.claims.push ( s ) ;
+					} ) ;
+				}
+				
 				item.claims.push ( me.newClaimItem ( { id:question.type , property:wdid.p_type } ) ) ; // Type
 				if ( $.trim(question.hint.text||'') != '' ) item.claims.push ( me.newClaimMonolingual ( { text:question.hint.text , property:wdid.p_hint , language:question.hint.language } ) ) ; // Hint
 				$.each ( question.answers , function ( k , answer ) {
 					item.claims.push ( me.createAnswer ( question , answer ) ) ;
 				} ) ;
 				
-//				if ( question.type == wdid.q_label_item_question ) { console.log ( item ) ; return }
 				todo.push ( { data:item , add2quiz:question.add2quiz } ) ;
 			} ) ;
 			me.createAllItems ( todo ) ;

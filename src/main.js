@@ -8,6 +8,7 @@ import QuizPage from './pages/QuizPage.vue'
 import DesignQuiz from './pages/DesignQuiz.vue'
 import NewQuestions from './pages/NewQuestions.vue'
 import ImportMoodleXML from './pages/ImportMoodleXML.vue'
+import ItemList from './pages/ItemList.vue'
 import WikibaseItem from './mixins/WikibaseItem.js'
 import i18n from './components/i18n.vue'
 import NavHeader from './components/nav-header.vue'
@@ -24,6 +25,7 @@ const routes = [
   { path: '/import/moodle_xml', component: ImportMoodleXML } ,
   { path: '/design/quiz', component: DesignQuiz } ,
   { path: '/design/quiz/:q', component: DesignQuiz , props:true } ,
+  { path: '/items/:q', component: ItemList , props:true } ,
 ] ;
 
 var router ;
