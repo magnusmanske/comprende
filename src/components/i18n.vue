@@ -15,10 +15,11 @@
 import { user , wdid , wikibase_default_site } from '../config.js'
 import WikibaseItem from '../mixins/WikibaseItem.js'
 import wikibaseAPImixin from '../mixins/wikibaseAPImixin.js'
+import translationMixin from '../mixins/translationMixin.js'
 
 export default {
 	props : [ 'k' , 'params' ] ,
-	mixins : [ wikibaseAPImixin ] ,
+	mixins : [ wikibaseAPImixin , translationMixin ] ,
 	data : function () { return { editing:false , translation:'',available:false,is_fallback:false,fallback_lang:'',translate_title:'',no_translation_available:'' , user } } ,
 	created : function () { this.render() } ,
 	methods : {
@@ -48,39 +49,11 @@ export default {
 			t = me.getTranslation ( 'no_translation_available' , me.getAllUserLanguages() ) ;
 			me.no_translation_available = t.translation ;
 		} ,
-		getAllUserLanguages : function () {
-			var ret = [ this.getMainLanguage() ] . concat ( user.settings.fallback_languages ) ;
-			if ( -1 == ret.indexOf('en') ) ret.push ( 'en' ) ; // Hardcoded fallback language as last resort
-			return ret ;
-		} ,
 		tr : function ( key , params ) {
 			if ( $.trim(key) == '' ) return '' ;
 			var tr = this.getTranslation ( key , params ) ;
 			if ( typeof tr == 'undefined' ) return 'no translation: ' + key ;
 			return tr.translation + (tr.language==this.getMainLanguage()?'':' ['+tr.language+']') ;
-		} ,
-		getTranslation : function ( _key , params ) {
-			if ( typeof _key == 'undefined' ) return ;
-			var me = this ;
-			var ret ;
-			var langs = me.getAllUserLanguages() ;
-			var key = $.trim(_key.toLowerCase()).replace(/ /g,'_') ;
-			var kv = wikibase_default_site.i18n[key] ;
-			if ( typeof kv == 'undefined' ) return ;
-			$.each ( langs , function ( num , l ) {
-				if ( typeof kv.data[l] == 'undefined' ) return ;
-				var t = kv.data[l].text ;
-				$.each ( (params||[]) , function ( num0 , p ) {
-					var regex = new RegExp ( '\\$'+(num0+1)+'\\b' , 'g' ) ;
-					t = t.replace ( regex , p ) ;
-				} ) ;
-				ret = { language:l , translation:t } ;
-				return false ;
-			} ) ;
-			return ret ;
-		} ,
-		getMainLanguage : function () {
-			return user.settings.language ;
 		} ,
 		clickTranslate : function () {
 			var me = this ;

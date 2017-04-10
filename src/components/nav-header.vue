@@ -10,12 +10,16 @@
 	<div class="collapse navbar-collapse" id="navbarSupportedContent">
 		<ul class="navbar-nav mr-auto">
 			<li class="nav-item dropdown">
-				<span v-if='user.isLoggedIn()' style='cursor:pointer;' class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{user.getUserName()}}</span>
-				<span v-else class="nav-item"><a target='_blank' href='./index.php?title=Special:Login'>Log in</a></span>
-				<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-					<a v-if='user.isLoggedIn()' class="dropdown-item" href='#' @click.prevent='user.userSettingsDialog'><i18n k='user settings'/></a>
-					<a v-if='user.isLoggedIn()' class="dropdown-item" :href="user.getUserPageURL()"><i18n k='user page'/></a>
-					<a href='https://github.com/magnusmanske/comprende' target='_blank' class='dropdown-item external'><i18n k='git'/></a>
+				<div class="btn-group">
+					<a v-if='user.isLoggedIn()' type="button" class="btn btn-secondary nav-link" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{user.getUserName()}}</a>
+					<a v-else type="button" class="btn btn-secondary nav-link" href="./index.php?title=Special:Login" target='_blank'>Log in</a>
+					<button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+						<a v-if='user.isLoggedIn()' class="dropdown-item" href='#' @click.prevent='user.userSettingsDialog'><i18n k='user settings'/></a>
+						<a v-if='user.isLoggedIn()' class="dropdown-item" :href="user.getUserPageURL()"><i18n k='user page'/></a>
+						<a href='https://github.com/magnusmanske/comprende' target='_blank' class='dropdown-item external'><i18n k='git'/></a>
+						<a :href='"./index.php?title=Item:"+wdid.q_i18n' class='dropdown-item external'><i18n k='interface translation item'/></a>
+					</div>
 				</div>
 			</li>
 		</ul>
@@ -58,10 +62,10 @@
 
 <script>
 import i18n from './i18n.vue'
-import { user } from '../config.js'
+import { user, wdid } from '../config.js'
 
 export default {
-	data : function () { return { user } } ,
+	data : function () { return { user , wdid } } ,
 	components : { i18n } ,
 }
 </script>

@@ -79,13 +79,16 @@ export var wdid = {
 	p_translation_key:'P25',
 	p_translation:'P26',
 	p_sort_order:'P29',
+	p_display:'P34',
 	
 	q_i18n:'Q77',
+	q_info_panel:'Q86',
 	q_label_item_question:'Q3',
 	q_multiple_choice_question:'Q4',
 	q_questions:['Q3','Q4'],
 	q_html:'Q7',
 	q_quiz:'Q8',
+	q_detailed_display:'Q88',
 }
 
 // Default wikibase installation, to be used by wikibaseAPImixin

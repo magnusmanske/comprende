@@ -3,7 +3,7 @@
 <div class="card-block">
 
 <h4 class="card-title">
-<div v-if='!thumbnail' style='float:right;margin:5px;font-size:8pt;'>[<a :href='"/comprende/index.php?title=Item:"+q' title='See/edit the data item for this question' target='_blank'>{{q}}</a>]</div>
+<div v-if='!thumbnail' style='float:right;margin:5px;font-size:8pt;'>[<a class='wb' :href='"/comprende/index.php?title=Item:"+q' title='See/edit the data item for this question' target='_blank'>{{q}}</a>]</div>
 {{title}}
 </h4>
 <h6 class="card-subtitle mb-2 text-muted">{{subtitle}}</h6>

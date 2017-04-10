@@ -3,7 +3,7 @@
 <div class="card-block">
 
 <h4 class="card-title">
-<div v-if='!thumbnail' style='float:right;margin:5px;font-size:8pt;'>[<a :href='"/comprende/index.php?title=Item:"+q' title='See/edit the data item for this question' target='_blank'>{{q}}</a>]</div>
+<div v-if='!thumbnail' style='float:right;margin:5px;font-size:8pt;'>[<a class='wb' :href='"/comprende/index.php?title=Item:"+q' title='See/edit the data item for this question' target='_blank'>{{q}}</a>]</div>
 {{title}}
 </h4>
 <h6 class="card-subtitle mb-2 text-muted">{{subtitle}}</h6>
@@ -75,8 +75,10 @@ export default {
 			}
 			var wd_answers = me.i.getStringValues ( wdid.p_wd_answer ) ;
 			
-			function getNewAnswer ( sid ) {
-				return {q:me.q,sid:sid,selected:false,fraction:-1,single_focus:true,has_focus:false,num:0,check_text:'',number_focus:false,number_highlight:false} ;
+			function getNewAnswer ( sid , opt ) {
+				var ret = {q:me.q,sid:sid,selected:false,fraction:-1,single_focus:true,has_focus:false,num:0,check_text:'',number_focus:false,number_highlight:false} ;
+				$.each ( (opt||{}) , function ( k , v ) { ret.k = v } ) ;
+				return ret ;
 			}
 
 			function fin () {

@@ -10,7 +10,7 @@
 		<span v-if='type==wdid.p_text_answer'>{{label.text}}</span>
 		<span v-else-if='type==wdid.p_wd_answer'>{{label.text}}</span>
 		<span v-else style='color:red'>{{label.text}}</span>
-		<small v-if='label.language!=user.settings.language' style='color:#BBB'>[{{label.language}}]</small>
+		<small v-if='label.language!=user.settings.language' style='color:#BBB' @click.prevent='onEditAnswer'>[{{label.language}}]</small>
 	</div>
 </div>
 <div style='display:table-cell;white-space:nowrap;padding-left:3px;' v-if='type==wdid.p_wd_answer && user.settings.show_wikidata_links'> <small>[<a :href='"https://www.wikidata.org/wiki/"+answer_wd_q' target='_blank'>{{answer_wd_q}}</a>]</small></div>
@@ -22,11 +22,12 @@
 
 
 <script>
-import { wdid , wikidata_site , user } from '../../config.js'
+import { wdid , wikidata_site , wikibase_default_site , user } from '../../config.js'
+import translationMixin from '../../mixins/translationMixin.js'
 import wikibaseAPImixin from '../../mixins/wikibaseAPImixin.js'
 
 export default {
-	mixins : [ wikibaseAPImixin ] ,
+	mixins : [ wikibaseAPImixin , translationMixin ] ,
 	props: [ 'state' , 'check_choice' ] ,
 	data : function () { return { q:'' , statement:{} , label:'' , type:0 , answer_wd_q:0 , use_class:'' , wdid , user } } ,
 	created : function () { this.init () } ,
@@ -68,7 +69,47 @@ export default {
 			if ( this.state.checkable ) this.state.selected = !this.state.selected ;
 			if ( this.state.single_focus ) this.state.has_focus = !this.state.has_focus ;
 			this.$emit('answer_clicked',this.state) ;
-		}
+		} ,
+		onEditAnswer : function ( label ) {
+			return ; // TEMPORARILY DEACTIVATED
+			var me = this ;
+			if ( me.statement.mainsnak.property != wdid.p_text_answer ) return ;
+
+			var initial_value = label.text ;
+			var t = me.getTranslation ( 'translate_to' , me.getAllUserLanguages() ) ;
+			var result = prompt ( t.translation , initial_value ) ;
+			if ( result === null || result == initial_value ) return ;
+			me.addTranslation ( result , user.settings.language ) ;
+		} ,
+		addTranslation : function ( text , lang ) {
+			var me = this ;
+			var q = me.statement.id.replace ( /\$.*$/ , '' ) ;
+			var data = me.newClaimMonolingual ( {
+				text:text ,
+				language:lang ,
+				property:wdid.p_text_answer ,
+				qualifiers : me.statement.qualifiers
+			} ) ;
+			var params = {
+				action:'wbeditentity' ,
+				id:q ,
+				data:JSON.stringify ( {claims:[data]} )
+			} ;
+			me.getToken ( function ( token ) {
+				params.token = token ;
+				params.format = 'json' ;
+				$.post ( wikibase_default_site.api , params , function ( d ) {
+					if ( d.success ) {
+						me.reloadItems ( [ q ] , function () {
+						} ) ;
+					} else {
+						console.log ( d ) ;
+						alert ( d.error.info ) ;
+					}
+				} , 'json' ) ;
+			} ) ;
+
+		} ,
 	} ,
 	watch : {
 		state : { handler : function () { this.init() } , deep : true } ,

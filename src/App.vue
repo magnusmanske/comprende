@@ -35,7 +35,9 @@ a.external {
 }
 a.wikipedia {
 }
-
+a.wb { /* The local WikiBase installation */
+	color:#2966B8;
+}
 
 @media screen and (orientation:portrait) {
 
